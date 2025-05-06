@@ -1,4 +1,4 @@
-package com.sigis; // o usa tu paquete principal
+package com.sigis; 
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
