@@ -71,12 +71,7 @@ jwt.secret=tuclave
 ```
 ## Base de datos
 
-```properties
-docs
-
-jwt.secret=tuclave
-```
-![Texto alternativo](floreria_db.sql)
+Puedes ver el script completo aquí: [📂 Ver script.sql](docs/floreria_db.sql)
 
 ## Pruebas
 
