@@ -1,6 +1,6 @@
 # Tienda Virtual de flores
 Un ecommerce donde podras encontrar una varidad significativa de flores para ocasioens especiales
-
+![Texto alternativo](docs/figma1.png)
 ## Características principales
 
 - **Catalogo de productos**: Se encontrada una variedad de productos con un filtro de cada categoria.
