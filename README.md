@@ -72,6 +72,7 @@ jwt.secret=tuclave
 ## Base de datos
 
 Puedes ver el script completo aquí: [📂 Ver script.sql](docs/floreria_db.sql)
+(https://utpedupe-my.sharepoint.com/:x:/g/personal/u19213314_utp_edu_pe/Ea9v0aDoe8ZFr3vldQ0Db_sBIsopKJJPMwW6ZOV5qbM01A?rtime=DusEASub3Ug)
 
 ## Pruebas
 
