@@ -18,8 +18,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Aquí defines los roles o permisos del usuario
-        // Por ejemplo, si tu UserModel tiene un Rol con tipoRol:
         return List.of(new SimpleGrantedAuthority(user.getRol().getTipoRol()));
     }
 
@@ -33,7 +31,6 @@ public class CustomUserDetails implements UserDetails {
         return user.getUsername();
     }
 
-    // Puedes personalizar estas validaciones según tu modelo
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -41,7 +38,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !"BLOQUEADO".equalsIgnoreCase(user.getEstado());  // Ejemplo
+        return !"BLOQUEADO".equalsIgnoreCase(user.getEstado());
     }
 
     @Override
@@ -55,7 +52,6 @@ public class CustomUserDetails implements UserDetails {
         return estado != null && (estado.equalsIgnoreCase("activo") || estado.equalsIgnoreCase("active"));
     }
 
-    // Si necesitas, también puedes agregar getters para tu UserModel
     public UserModel getUser() {
         return user;
     }
