@@ -1,10 +1,16 @@
+![Texto alternativo](docs/design.png)
+![Texto alternativo](docs/design2.png)
+
 # Tienda Virtual de flores
 Un ecommerce donde podras encontrar una varidad significativa de flores para ocasioens especiales
-
 ## Características principales
 
 - **Catalogo de productos**: Se encontrada una variedad de productos con un filtro de cada categoria.
 - **Compra online**: Se podra comprar mediante una pasarela de pago.
+## Características principales
+--**Diagramas**
+![Texto alternativo](docs/diagramaclases.png)
+![Texto alternativo](docs/entidadrelacionn.png)
 
 ## Tecnologias utilizadas
 
@@ -63,6 +69,10 @@ jwt.secret=tuclave
     <artifactId>spring-boot-starter-web</artifactId>
 </dependency>
 ```
+## Base de datos
+
+Puedes ver el script completo aquí: [📂 Ver script.sql](docs/floreria_db.sql)
+(https://utpedupe-my.sharepoint.com/:x:/g/personal/u19213314_utp_edu_pe/Ea9v0aDoe8ZFr3vldQ0Db_sBIsopKJJPMwW6ZOV5qbM01A?rtime=DusEASub3Ug)
 
 ## Pruebas
 
