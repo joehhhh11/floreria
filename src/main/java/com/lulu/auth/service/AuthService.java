@@ -8,15 +8,20 @@ import com.lulu.auth.model.*;
 import com.lulu.auth.repository.*;
 import com.lulu.auth.security.JWTService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
+import com.google.common.collect.Lists;a
+import com.google.common.base.Preconditions; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthService {
+
     @Autowired
     private UserCredentialsRepository userCredentialsRepository;
 
@@ -41,16 +46,18 @@ public class AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public RegisterResponse register(RegisterRequest request){
-        if (userRepository.existsByUsername(request.getUsername())){
-            throw new RuntimeException("El username ya esta en uso");
+    public RegisterResponse register(RegisterRequest request) {
+        if (StringUtils.isBlank(request.getUsername())) {
+            throw new RuntimeException("El nombre de usuario no puede estar vacío");
         }
-        if (userRepository.existsByCorreo(request.getCorreo())){
-            throw new RuntimeException("El username ya esta en uso");
+        if (StringUtils.isBlank(request.getCorreo()) || !StringUtils.contains(request.getCorreo(), "@")) {
+            throw new RuntimeException("Correo no válido");
         }
+
+        Preconditions.checkArgument(!userRepository.existsByUsername(request.getUsername()), "El username ya esta en uso");
+        Preconditions.checkArgument(!userRepository.existsByCorreo(request.getCorreo()), "El correo ya esta en uso");
 
         UserModel user = new UserModel();
-
         user.setNombre(request.getNombre());
         user.setApellidos(request.getApellidos());
         user.setTelefono(request.getTelefono());
@@ -62,7 +69,7 @@ public class AuthService {
         user.setPassword(encodedPassword);
 
         RolModel rolDefect = rolRepository.findByTipoRol("usuario")
-                .orElseThrow(()-> new RuntimeException("Rol no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
         user.setRol(rolDefect);
         user.setEstado("Active");
 
@@ -78,22 +85,24 @@ public class AuthService {
         twoFA.setUser(savedUser);
         twoFA.setSecretKey("DEFAULT");
         twoFA.setEnabled(false);
-
         user2FARepository.save(twoFA);
 
-        String jwt=jwtService.generateToken(savedUser);
+        String jwt = jwtService.generateToken(savedUser);
         return new RegisterResponse(jwt);
     }
 
-    public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest){
-        UserModel user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
+        Optional<UserModel> userOptional = Optional.ofNullable(userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
+
+        UserModel user = userOptional.get();
 
         if (user.getUser2FA() != null && user.getUser2FA().getEnabled()) {
             throw new RuntimeException("2FA requerido");
         }
 
         String jwt = jwtService.generateToken(user);
+
         TokenModel tokenRecord = new TokenModel();
         tokenRecord.setUser(user);
         tokenRecord.setRefreshToken(jwt);
@@ -103,8 +112,10 @@ public class AuthService {
         tokenRecord.setUserAgent(httpRequest.getHeader("User-Agent"));
         userTokensRepository.save(tokenRecord);
 
-        List<String> modulos = user.getRol().getModulos()
-                .stream().map(ModuloModel::getNombre).toList();
+        List<String> modulos = Lists.newArrayList();
+        if (user.getRol() != null && user.getRol().getModulos() != null) {
+            modulos = Lists.transform(user.getRol().getModulos(), modulo -> modulo.getNombre());
+        }
 
         return new LoginResponse(jwt, user.getUsername(), user.getRol().getTipoRol(), modulos);
     }
