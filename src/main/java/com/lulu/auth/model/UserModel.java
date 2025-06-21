@@ -43,17 +43,4 @@ public class UserModel {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt = new Date();
-
-    private Boolean active = true;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = new Date();
-        updatedAt = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = new Date();
-    }
 }
