@@ -3,6 +3,8 @@ package com.lulu.product.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -25,15 +27,18 @@ public class ProductModel {
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
-    @Column(name = "imagen_url")
-    private String imageUrl;
-
-    @Column(name = "categoria_id")
-    private Integer categoriaId;
-
     @Column(name = "destacado")
     private Boolean destacado;
 
     @Column(name = "fecha_creacion")
     private LocalDateTime fechaCreacion;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private CategoryModel categoria;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ImageModel> imagenes = new ArrayList<>();
+
+
 }

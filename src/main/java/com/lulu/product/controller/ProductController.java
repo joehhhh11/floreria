@@ -4,6 +4,8 @@ import com.lulu.product.dto.ProductRequest;
 import com.lulu.product.dto.ProductResponse;
 import com.lulu.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -13,10 +15,14 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping
-    public ProductResponse createProduct(@RequestBody ProductRequest request) {
-        return productService.createProduct(request);
+    @PostMapping(
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ProductResponse> createProduct(@ModelAttribute ProductRequest request) {
+        return ResponseEntity.ok(productService.createProduct(request));
     }
+
 
     @PutMapping("/{id}")
     public ProductResponse updateProduct(@PathVariable Long id, @RequestBody ProductRequest request) {

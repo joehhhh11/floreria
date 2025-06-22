@@ -12,7 +12,7 @@ import java.util.List;
 public class RolModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String tipoRol;
     @ManyToMany(fetch = FetchType.EAGER)

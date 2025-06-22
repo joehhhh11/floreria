@@ -68,10 +68,12 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         user.setPassword(encodedPassword);
 
-        RolModel rolDefect = rolRepository.findByTipoRol("usuario")
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-        user.setRol(rolDefect);
-        user.setEstado("Active");
+        String tipoRol = StringUtils.isBlank(request.getRol()) ? "usuario" : request.getRol();
+
+        RolModel rolSeleccionado = rolRepository.findByTipoRol(tipoRol)
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + tipoRol));
+
+        user.setRol(rolSeleccionado);
 
         UserModel savedUser = userRepository.save(user);
 

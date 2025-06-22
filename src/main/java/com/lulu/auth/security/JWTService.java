@@ -22,6 +22,7 @@ public class JWTService {
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("role", user.getRol().getTipoRol())
+                .claim("user_id", user.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 horas
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
@@ -47,4 +48,9 @@ public class JWTService {
     public boolean validateToken(String token, UserModel user) {
         return user.getUsername().equals(extractUsername(token)) && !isTokenExpired(token);
     }
+    public Long extractUserId(String token) {
+        Claims claims = extractClaims(token);
+        return claims.get("user_id", Long.class);
+    }
+
 }

@@ -18,7 +18,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRol().getTipoRol()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRol().getTipoRol().toUpperCase()));
     }
 
     @Override
@@ -51,6 +51,7 @@ public class CustomUserDetails implements UserDetails {
         String estado = user.getEstado();
         return estado != null && (estado.equalsIgnoreCase("activo") || estado.equalsIgnoreCase("active"));
     }
+
 
     public UserModel getUser() {
         return user;

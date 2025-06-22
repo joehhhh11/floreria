@@ -12,7 +12,7 @@ public class TwoFAModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
-    private long id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "user_id" ,referencedColumnName = "id")
