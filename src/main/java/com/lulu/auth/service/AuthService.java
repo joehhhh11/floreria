@@ -1,6 +1,10 @@
 package com.lulu.auth.service;
 
 import com.lulu.auth.dto.*;
+import com.lulu.auth.dto.LoginRequest;
+import com.lulu.auth.dto.LoginResponse;
+import com.lulu.auth.dto.RegisterRequest;
+import com.lulu.auth.dto.RegisterResponse;
 import com.lulu.auth.model.*;
 import com.lulu.auth.repository.*;
 import com.lulu.auth.security.JWTService;
@@ -128,6 +132,7 @@ public class AuthService {
         String jwt = jwtService.generateToken(savedUser);
         return new RegisterResponse(jwt);
     }
+
     public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
         Optional<UserModel> userOptional = Optional.ofNullable(userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
@@ -156,6 +161,7 @@ public class AuthService {
 
         return new LoginResponse(jwt, user.getUsername(), user.getRol().getTipoRol(), modulos);
     }
+
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream().map(user -> {
             UserResponse dto = new UserResponse();
@@ -175,4 +181,5 @@ public class AuthService {
             return dto;
         }).toList();
     }
+
 }

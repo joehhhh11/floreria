@@ -80,6 +80,9 @@ Puedes ver el script completo aquí: [📂 Ver script.sql](docs/floreria_db.sql)
   ```sh
   ./mvnw test
    ```
+<<<<<<< HEAD
 "# pruebas" 
 "# pruebas" 
 "# pruebasxd" 
+=======
+>>>>>>> f987e5c1a22921dce50c4a048c05c5ac1ce4215a

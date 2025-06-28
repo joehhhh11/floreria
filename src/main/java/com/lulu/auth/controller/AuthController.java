@@ -1,6 +1,10 @@
 package com.lulu.auth.controller;
 
 import com.lulu.auth.dto.*;
+import com.lulu.auth.dto.LoginRequest;
+import com.lulu.auth.dto.LoginResponse;
+import com.lulu.auth.dto.RegisterRequest;
+import com.lulu.auth.dto.RegisterResponse;
 import com.lulu.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,7 @@ public class AuthController {
     public LoginResponse login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
         return authService.login(request, httpRequest);
     }
+
     // AuthController.java
     @PostMapping("/register/clerk")
     public ResponseEntity<RegisterResponse> registerClerk(@RequestBody ClerkRequest request) {
