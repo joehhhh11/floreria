@@ -2,6 +2,9 @@ package com.lulu.product.service;
 
 import com.lulu.product.dto.ProductRequest;
 import com.lulu.product.dto.ProductResponse;
+import com.lulu.product.model.CategoryModel;
+import com.lulu.product.model.ProductModel;
+
 import java.util.List;
 
 public interface ProductService {
@@ -10,4 +13,8 @@ public interface ProductService {
     void deleteProduct(Long id);
     ProductResponse getProduct(Long id);
     List<ProductResponse> getAllProducts();
+
+    List<CategoryModel> getCategory();
+
+    List<ProductModel> getProductsByCategory(Long categoriaId);
 }

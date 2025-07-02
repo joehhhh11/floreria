@@ -2,11 +2,15 @@ package com.lulu.product.controller;
 
 import com.lulu.product.dto.ProductRequest;
 import com.lulu.product.dto.ProductResponse;
+import com.lulu.product.model.CategoryModel;
+import com.lulu.product.model.ProductModel;
 import com.lulu.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @RestController
@@ -42,5 +46,23 @@ public class ProductController {
     @GetMapping
     public List<ProductResponse> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    @GetMapping("/category/{id}")
+    public List<ProductModel> getProductsByCategory(@PathVariable("id") Long id) {
+        return productService.getProductsByCategory(id);
+    }
+    @PostMapping("/import")
+    public ResponseEntity<?> importExcel(@RequestParam("file") MultipartFile file) {
+        if (!file.getOriginalFilename().endsWith(".xlsx")) {
+            return ResponseEntity.badRequest().body("Formato inválido. Solo .xlsx permitido.");
+        }
+
+        try {
+            productService.importFromExce(file);
+            return ResponseEntity.ok("Productos importados correctamente.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al importar: " + e.getMessage());
+        }
     }
 }
