@@ -41,14 +41,7 @@ public class OrderServiceImpl implements OrderService {
     private UserRepository userRepository;
     @Override
     public OrderResponse createOrder(OrderRequest request) {
-
-            System.out.println("🚀 Entrando a createOrder");
             UserModel currentUser = authenticatedUserProvider.getCurrentUser();
-            System.out.println("🚀 user conseguido supuestamente mas abajo");
-            System.out.println("📦 User ID: " + (currentUser != null ? currentUser.getId() : "null"));
-            System.out.println("📦 User Nombre: " + (currentUser != null ? currentUser.getNombre() : "null"));
-            System.out.println("📦 User Email: " + (currentUser != null ? currentUser.getCorreo() : "null"));
-
             if (currentUser == null || currentUser.getId() == null) {
                 throw new RuntimeException("Usuario no autenticado o sin id válido");
             }
@@ -60,12 +53,9 @@ public class OrderServiceImpl implements OrderService {
                 cupon = cuponRepository.findById(cuponId)
                         .orElseThrow(() -> new IllegalArgumentException("❌ Cupón no encontrado con ID: " + cuponId));
             }
-            System.out.println("📦 Cupon: " + cuponId);
             OrderModel order = orderMapper.toEntity(request, currentUser, cupon);
-        System.out.println("📦GUARDOOO111");
 
             OrderModel savedOrder = orderRepository.save(order);
-        System.out.println("📦GUARDOOO");
             return orderMapper.toResponse(savedOrder);
 
 

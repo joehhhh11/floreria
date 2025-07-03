@@ -6,6 +6,7 @@ import com.lulu.product.model.CategoryModel;
 import com.lulu.product.model.ProductModel;
 import com.lulu.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,16 +54,13 @@ public class ProductController {
         return productService.getProductsByCategory(id);
     }
     @PostMapping("/import")
-    public ResponseEntity<?> importExcel(@RequestParam("file") MultipartFile file) {
-        if (!file.getOriginalFilename().endsWith(".xlsx")) {
-            return ResponseEntity.badRequest().body("Formato inválido. Solo .xlsx permitido.");
-        }
-
+    public ResponseEntity<String> importFromExcel(@RequestParam("file") MultipartFile file) {
         try {
-            productService.importFromExce(file);
-            return ResponseEntity.ok("Productos importados correctamente.");
+            productService.importFromExcel(file);
+            return ResponseEntity.ok("Archivo importado correctamente");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al importar: " + e.getMessage());
         }
     }
+
 }

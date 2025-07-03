@@ -1,5 +1,6 @@
 package com.lulu.product.mapper;
 
+import com.lulu.product.dto.CategoryResponse;
 import com.lulu.product.dto.ProductRequest;
 import com.lulu.product.dto.ProductResponse;
 import com.lulu.product.model.CategoryModel;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -56,7 +58,13 @@ public class ProductMapper {
                         .map(ImageModel::getImagenUrl)
                         .collect(Collectors.toList())
         );
-        response.setCategoriaId(product.getCategoria() != null ? product.getCategoria().getId() : null);
+        if (product.getCategoria() != null) {
+            CategoryResponse cat = new CategoryResponse();
+            cat.setId(product.getCategoria().getId());
+            cat.setNombre(product.getCategoria().getNombre());
+            cat.setDescripcion(product.getCategoria().getDescripcion());
+            response.setCategoria(cat);
+        }
         response.setDestacado(product.getDestacado());
         response.setFechaCreacion(product.getFechaCreacion());
         return response;
@@ -72,4 +80,34 @@ public class ProductMapper {
                     return img;
                 }).collect(Collectors.toList());
     }
+    public ProductModel toEntityFromLinks(ProductRequest request) {
+        ProductModel product = new ProductModel();
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setStock(request.getStock());
+        product.setDestacado(request.getDestacado());
+
+        // Validar que imageUrls no sea null
+        List<ImageModel> imagenes = Optional.ofNullable(request.getImageUrls())
+                .orElse(List.of()) // si es null, usa una lista vacía
+                .stream()
+                .map(url -> {
+                    ImageModel img = new ImageModel();
+                    img.setImagenUrl(url);
+                    img.setProducto(product);
+                    return img;
+                })
+                .collect(Collectors.toList());
+
+        product.setImagenes(imagenes);
+
+        CategoryModel category = categoryRepository.findById(request.getCategoriaId())
+                .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
+        product.setCategoria(category);
+
+        return product;
+    }
+
+
 }

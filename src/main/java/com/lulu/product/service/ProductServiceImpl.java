@@ -7,11 +7,16 @@ import com.lulu.product.model.CategoryModel;
 import com.lulu.product.model.ProductModel;
 import com.lulu.product.repository.CategoryRepository;
 import com.lulu.product.repository.ProductRepository;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+
+import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,23 +78,80 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductModel> getProductsByCategory(Long categoriaId) {
         return productRepository.findByCategoriaId(categoriaId);
     }
-    public void importFromExcel(MultipartFile file) throws IOException {
-        Workbook workbook = new XSSFWorkbook(file.getInputStream());
-        Sheet sheet = workbook.getSheetAt(0);
-
-        for (Row row : sheet) {
-            if (row.getRowNum() == 0) continue; // salta encabezados
-
-            Product product = new Product();
-            product.setName(row.getCell(0).getStringCellValue());
-            product.setDescription(row.getCell(1).getStringCellValue());
-            product.setPrice(row.getCell(2).getNumericCellValue());
-            product.setCategory(row.getCell(3).getStringCellValue());
-            product.setImages(List.of(row.getCell(4).getStringCellValue())); // si es una URL
-
-            productRepository.save(product);
-        }
-
-        workbook.close();
+    private String getStringValue(Cell cell) {
+        if (cell == null) return "";
+        return switch (cell.getCellType()) {
+            case STRING -> cell.getStringCellValue();
+            case NUMERIC -> String.valueOf(cell.getNumericCellValue());
+            case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
+            default -> "";
+        };
     }
-}
+
+    private double getNumericValue(Cell cell) {
+        if (cell == null) return 0;
+        if (cell.getCellType() == CellType.NUMERIC) return cell.getNumericCellValue();
+        if (cell.getCellType() == CellType.STRING) return Double.parseDouble(cell.getStringCellValue());
+        return 0;
+    }
+
+    private boolean getBooleanValue(Cell cell) {
+        if (cell == null) return false;
+        return switch (cell.getCellType()) {
+            case BOOLEAN -> cell.getBooleanCellValue();
+            case STRING -> cell.getStringCellValue().equalsIgnoreCase("true");
+            case NUMERIC -> cell.getNumericCellValue() != 0;
+            default -> false;
+        };
+    }
+
+    @Override
+
+    public void importFromExcel(MultipartFile file) throws Exception {
+        List<ProductModel> products = new ArrayList<>();
+
+        try (InputStream is = file.getInputStream();
+             Workbook workbook = WorkbookFactory.create(is)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
+
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue; // saltar encabezado
+
+                // Validar celdas no nulas
+                if (row.getCell(0) == null) continue;
+
+                String name = getStringValue(row.getCell(0));
+                String description = getStringValue(row.getCell(1));
+                double price = getNumericValue(row.getCell(2));
+                int stock = (int) getNumericValue(row.getCell(3));
+                boolean destacado = getBooleanValue(row.getCell(4));
+                long categoriaId = (long) getNumericValue(row.getCell(5));
+                String rawLinks = getStringValue(row.getCell(6));
+
+                List<String> urls = Arrays.stream(rawLinks.split(","))
+                        .map(String::trim)
+                        .filter(s -> !s.isEmpty())
+                        .collect(Collectors.toList());
+
+                ProductRequest request = new ProductRequest();
+                request.setName(name);
+                request.setDescription(description);
+                request.setPrice(price);
+                request.setStock(stock);
+                request.setDestacado(destacado);
+                request.setCategoriaId(categoriaId);
+                request.setImageUrls(urls); // <--- Aquí está el punto importante
+
+                ProductModel model = productMapper.toEntityFromLinks(request);
+                products.add(model);
+            }
+
+            productRepository.saveAll(products);
+        }
+    }
+
+    }
+
+
+

@@ -5,6 +5,7 @@ com\lulu\auth\security\CustomUserDetailsService.class
 com\lulu\auth\repository\UserTokensRepository.class
 com\lulu\auth\security\AuthenticatedUserProvider.class
 com\lulu\auth\WebConfig$1.class
+com\lulu\product\controller\CategoryController.class
 com\lulu\product\model\ProductModel.class
 com\lulu\auth\SecurityConfig.class
 com\lulu\auth\security\JWTAuthenticationFilter.class

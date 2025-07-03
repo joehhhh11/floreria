@@ -14,5 +14,6 @@ public class ProductResponse {
     private List<String> imageUrls;
     private Long categoriaId;
     private Boolean destacado;
+    private CategoryResponse categoria;
     private LocalDateTime fechaCreacion;
 }
