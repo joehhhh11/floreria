@@ -94,13 +94,10 @@ class OrderMapperTest {
 
     @Test
     void toEntity_ShouldCreateOrderModel_WhenValidInput() {
-        // Arrange
         when(productRepository.findById(1L)).thenReturn(Optional.of(sampleProduct));
 
-        // Act
         OrderModel result = orderMapper.toEntity(sampleRequest, sampleUser, sampleCupon);
 
-        // Assert
         assertNotNull(result);
         assertEquals("123 Calle Principal", result.getDireccionEnvio());
         assertEquals("DELIVERY", result.getTipoEntrega());
@@ -115,7 +112,6 @@ class OrderMapperTest {
 
     @Test
     void toEntity_ShouldThrowException_WhenUserIsNull() {
-        // Act & Assert
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> orderMapper.toEntity(sampleRequest, null, sampleCupon)
@@ -126,10 +122,8 @@ class OrderMapperTest {
 
     @Test
     void toEntity_ShouldThrowException_WhenUserIdIsNull() {
-        // Arrange
         sampleUser.setId(null);
 
-        // Act & Assert
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> orderMapper.toEntity(sampleRequest, sampleUser, sampleCupon)
@@ -140,11 +134,9 @@ class OrderMapperTest {
 
     @Test
     void toEntity_ShouldThrowException_WhenCuponIdIsNullButCuponProvided() {
-        // Arrange
         CuponModel cuponSinId = new CuponModel();
         cuponSinId.setId(null);
 
-        // Act & Assert
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> orderMapper.toEntity(sampleRequest, sampleUser, cuponSinId)
@@ -155,13 +147,10 @@ class OrderMapperTest {
 
     @Test
     void toEntity_ShouldWork_WhenCuponIsNull() {
-        // Arrange
         when(productRepository.findById(1L)).thenReturn(Optional.of(sampleProduct));
 
-        // Act
         OrderModel result = orderMapper.toEntity(sampleRequest, sampleUser, null);
 
-        // Assert
         assertNotNull(result);
         assertEquals(sampleUser, result.getUser());
         assertNull(result.getCuponModel());
@@ -171,15 +160,12 @@ class OrderMapperTest {
 
     @Test
     void updateEntityFromRequest_ShouldUpdateAllFields() {
-        // Arrange
         when(productRepository.findById(1L)).thenReturn(Optional.of(sampleProduct));
 
         OrderModel existingOrder = new OrderModel();
 
-        // Act
         orderMapper.updateEntityFromRequest(existingOrder, sampleRequest, sampleUser, sampleCupon);
 
-        // Assert
         assertEquals("123 Calle Principal", existingOrder.getDireccionEnvio());
         assertEquals("DELIVERY", existingOrder.getTipoEntrega());
         assertEquals(sampleUser, existingOrder.getUser());
@@ -188,7 +174,6 @@ class OrderMapperTest {
         assertNotNull(existingOrder.getProductos());
         assertEquals(1, existingOrder.getProductos().size());
 
-        // Verificar cálculo del total
         double expectedSubtotal = 2 * 25.99; // cantidad * precio
         double expectedDescuento = 10.0; // porcentaje del cupón
         double expectedTotal = expectedSubtotal - expectedDescuento;
@@ -199,12 +184,10 @@ class OrderMapperTest {
 
     @Test
     void updateEntityFromRequest_ShouldThrowException_WhenProductNotFound() {
-        // Arrange
         when(productRepository.findById(1L)).thenReturn(Optional.empty());
 
         OrderModel existingOrder = new OrderModel();
 
-        // Act & Assert
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> orderMapper.updateEntityFromRequest(existingOrder, sampleRequest, sampleUser, sampleCupon)
@@ -216,38 +199,29 @@ class OrderMapperTest {
 
     @Test
     void toResponse_ShouldCreateOrderResponse_WhenValidOrder() {
-        // Act
         OrderResponse result = orderMapper.toResponse(sampleOrder);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1L, result.getPedidoId());
         assertEquals("123 Calle Principal", result.getDireccionEnvio());
         assertEquals("DELIVERY", result.getTipoEntrega());
         assertNotNull(result.getFechaCreacion());
 
-        // Verificar cálculo del subtotal
         double expectedSubtotal = 2 * 25.99; // cantidad * precio
         assertEquals(expectedSubtotal, result.getSubtotal(), 0.01);
 
-        // Verificar descuento
         assertEquals(10.0, result.getDescuentoAplicado());
 
-        // Verificar total final
-        // La implementación actual hace: subtotal - descuentoPorcentaje (no calcula el porcentaje)
         double expectedTotal = expectedSubtotal - 10.0; // 51.98 - 10 = 41.98
         assertEquals(expectedTotal, result.getTotalFinal(), 0.01);
 
-        // Verificar cupón aplicado
         assertEquals("DESCUENTO10", result.getCuponAplicado());
 
-        // Verificar usuario
         assertNotNull(result.getUser());
         assertEquals(1L, result.getUser().getId());
         assertEquals("Juan", result.getUser().getNombre());
         assertEquals("juan@example.com", result.getUser().getCorreo());
 
-        // Verificar detalles
         assertNotNull(result.getDetalles());
         assertEquals(1, result.getDetalles().size());
         assertEquals(1L, result.getDetalles().get(0).getProductoId());
@@ -258,37 +232,29 @@ class OrderMapperTest {
 
     @Test
     void toResponse_ShouldHandleOrderWithoutCupon() {
-        // Arrange
         sampleOrder.setCuponModel(null);
 
-        // Act
         OrderResponse result = orderMapper.toResponse(sampleOrder);
 
-        // Assert
         assertNotNull(result);
         assertEquals(0.0, result.getDescuentoAplicado());
         assertNull(result.getCuponAplicado());
 
-        // El total final debería ser igual al subtotal cuando no hay cupón
         assertEquals(result.getSubtotal(), result.getTotalFinal());
     }
 
     @Test
     void toResponse_ShouldHandleOrderWithoutUser() {
-        // Arrange
         sampleOrder.setUser(null);
 
-        // Act
         OrderResponse result = orderMapper.toResponse(sampleOrder);
 
-        // Assert
         assertNotNull(result);
         assertNull(result.getUser());
     }
 
     @Test
     void toResponse_ShouldHandleOrderWithMultipleProducts() {
-        // Arrange
         ProductModel product2 = new ProductModel();
         product2.setId(2L);
         product2.setName("Rosa Blanca");
@@ -306,29 +272,26 @@ class OrderMapperTest {
         );
         sampleOrder.setProductos(multipleProducts);
 
-        // Act
         OrderResponse result = orderMapper.toResponse(sampleOrder);
 
-        // Assert
         assertNotNull(result);
         assertEquals(2, result.getDetalles().size());
 
-        // Verificar subtotal: (2 * 25.99) + (1 * 20.0) = 71.98
         double expectedSubtotal = (2 * 25.99) + (1 * 20.0);
         assertEquals(expectedSubtotal, result.getSubtotal(), 0.01);
     }
 
     @Test
     void updateEntityFromRequest_ShouldCalculateCorrectTotalWithoutCupon() {
-        // Arrange
+
         when(productRepository.findById(1L)).thenReturn(Optional.of(sampleProduct));
 
         OrderModel existingOrder = new OrderModel();
 
-        // Act
+
         orderMapper.updateEntityFromRequest(existingOrder, sampleRequest, sampleUser, null);
 
-        // Assert
+
         double expectedSubtotal = 2 * 25.99; // cantidad * precio
         double expectedTotal = expectedSubtotal; // sin descuento
         assertEquals(expectedTotal, existingOrder.getTotal());

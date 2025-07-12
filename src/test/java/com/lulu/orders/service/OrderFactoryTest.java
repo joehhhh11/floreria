@@ -51,28 +51,23 @@ class OrderFactoryTest {
 
     @Test
     void createBaseOrder_ShouldCreateOrderWithCorrectProperties() {
-        // Act
         OrderModel result = orderFactory.createBaseOrder(sampleUser, sampleRequest, sampleCupon);
 
-        // Assert
         assertNotNull(result);
         assertEquals(sampleUser, result.getUser());
         assertEquals("123 Calle Principal", result.getDireccionEnvio());
         assertEquals("DELIVERY", result.getTipoEntrega());
         assertEquals(sampleCupon, result.getCuponModel());
         assertNotNull(result.getFechaCreacion());
-        
-        // Verificar que la fecha de creación sea reciente (dentro de los últimos 5 segundos)
+
         assertTrue(result.getFechaCreacion().isAfter(LocalDateTime.now().minusSeconds(5)));
         assertTrue(result.getFechaCreacion().isBefore(LocalDateTime.now().plusSeconds(1)));
     }
 
     @Test
     void createBaseOrder_ShouldWorkWithNullCupon() {
-        // Act
         OrderModel result = orderFactory.createBaseOrder(sampleUser, sampleRequest, null);
 
-        // Assert
         assertNotNull(result);
         assertEquals(sampleUser, result.getUser());
         assertEquals("123 Calle Principal", result.getDireccionEnvio());
@@ -83,7 +78,6 @@ class OrderFactoryTest {
 
     @Test
     void calcularTotalConDescuento_ShouldCalculateCorrectTotal_WithoutCupon() {
-        // Arrange
         OrderDetailModel detalle1 = new OrderDetailModel();
         detalle1.setPrecioUnitario(10.0);
         detalle1.setCantidad(2);
@@ -94,7 +88,6 @@ class OrderFactoryTest {
 
         List<OrderDetailModel> detalles = Arrays.asList(detalle1, detalle2);
 
-        // Act
         double result = orderFactory.calcularTotalConDescuento(detalles, null);
 
         // Assert
@@ -113,24 +106,18 @@ class OrderFactoryTest {
         detalle2.setCantidad(3);
 
         List<OrderDetailModel> detalles = Arrays.asList(detalle1, detalle2);
-
-        // Act
         double result = orderFactory.calcularTotalConDescuento(detalles, sampleCupon);
 
-        // Assert
-        // Total esperado: (10*2) + (15*3) = 65, con 20% descuento = 52
+        // total esperado: (10*2) + (15*3) = 65, con 20% descuento = 52
         
         assertEquals(52.0, result, 0.01);
     }
 
     @Test
     void calcularTotalConDescuento_ShouldHandleEmptyList() {
-        // Arrange
         List<OrderDetailModel> detallesVacios = Arrays.asList();
 
-        // Act
         double result = orderFactory.calcularTotalConDescuento(detallesVacios, sampleCupon);
-
         // Assert
         assertEquals(0.0, result);
     }

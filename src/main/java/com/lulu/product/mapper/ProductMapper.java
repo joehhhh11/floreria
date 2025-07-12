@@ -8,6 +8,7 @@ import com.lulu.product.model.ImageModel;
 import com.lulu.product.model.ProductModel;
 import com.lulu.product.service.ImageUploadService;
 import com.lulu.product.repository.CategoryRepository;
+import com.lulu.reviews.dto.ReviewResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,6 +68,20 @@ public class ProductMapper {
         }
         response.setDestacado(product.getDestacado());
         response.setFechaCreacion(product.getFechaCreacion());
+
+        if (product.getReviews() != null) {
+            List<ReviewResponse> reviewResponses = product.getReviews().stream().map(review -> {
+                ReviewResponse r = new ReviewResponse();
+                r.setId(review.getId());
+                r.setComentario(review.getComentario());
+                r.setPuntuacion(review.getPuntuacion());
+                r.setFechaReview(review.getFechaReview());
+                r.setUsuario(review.getUser().getUsername());
+                return r;
+            }).collect(Collectors.toList());
+
+            response.setReviews(reviewResponses);
+        }
         return response;
     }
 

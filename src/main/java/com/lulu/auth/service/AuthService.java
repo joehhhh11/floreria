@@ -103,11 +103,9 @@ public class AuthService {
 
         Preconditions.checkArgument(!userRepository.existsByCorreo(request.getCorreo()), "El correo ya está en uso");
 
-        // Set rol por defecto
         RolModel rol = rolRepository.findByTipoRol("usuario")
                 .orElseThrow(() -> new RuntimeException("Rol por defecto no encontrado"));
 
-        // Crear el usuario sin contraseña
         UserModel user = new UserModel();
         user.setNombre(request.getNombre());
         user.setApellidos(request.getApellidos());
@@ -115,20 +113,18 @@ public class AuthService {
         user.setDni(request.getDni());
         user.setUsername(request.getUsername());
         user.setCorreo(request.getCorreo());
-        user.setPassword(null); // No hay contraseña porque Clerk maneja auth
+        user.setPassword(null);
         user.setRol(rol);
         user.setEstado("Active");
 
         UserModel savedUser = userRepository.save(user);
 
-        // Guardar 2FA por defecto (deshabilitado)
         TwoFAModel twoFA = new TwoFAModel();
         twoFA.setUser(savedUser);
         twoFA.setSecretKey("DEFAULT");
         twoFA.setEnabled(false);
         user2FARepository.save(twoFA);
 
-        // Generar token
         String jwt = jwtService.generateToken(savedUser);
         return new RegisterResponse(jwt);
     }
@@ -161,6 +157,47 @@ public class AuthService {
 
         return new LoginResponse(jwt, user.getUsername(), user.getRol().getTipoRol(), modulos);
     }
+    public LoginResponse loginWithClerk(ClerkRequest request) {
+        Optional<UserModel> optionalUser = userRepository.findByCorreo(request.getCorreo());
+
+        UserModel user;
+        if (optionalUser.isPresent()) {
+            user = optionalUser.get();
+        } else {
+            // Crear nuevo usuario si no existe
+            RolModel rol = rolRepository.findByTipoRol("usuario")
+                    .orElseThrow(() -> new RuntimeException("Rol por defecto no encontrado"));
+
+            user = new UserModel();
+            user.setNombre(request.getNombre());
+            user.setApellidos(request.getApellidos());
+            user.setUsername(request.getUsername());
+            user.setCorreo(request.getCorreo());
+            user.setPassword(null);
+            user.setRol(rol);
+            user.setEstado("Active");
+
+            user = userRepository.save(user);
+
+            TwoFAModel twoFA = new TwoFAModel();
+            twoFA.setUser(user);
+            twoFA.setSecretKey("DEFAULT");
+            twoFA.setEnabled(false);
+            user2FARepository.save(twoFA);
+        }
+
+        String jwt = jwtService.generateToken(user);
+
+        TokenModel tokenRecord = new TokenModel();
+        tokenRecord.setUser(user);
+        tokenRecord.setRefreshToken(jwt);
+        tokenRecord.setRevoked(false);
+        tokenRecord.setExpired(false);
+        userTokensRepository.save(tokenRecord);
+
+        return new LoginResponse(jwt, user.getUsername(), user.getRol().getTipoRol(), null);
+    }
+
 
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream().map(user -> {

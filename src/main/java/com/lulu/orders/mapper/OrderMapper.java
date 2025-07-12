@@ -8,6 +8,9 @@ import com.lulu.orders.dto.UserResumen;
 import com.lulu.orders.model.CuponModel;
 import com.lulu.orders.model.OrderDetailModel;
 import com.lulu.orders.model.OrderModel;
+import com.lulu.product.dto.CategoryResponse;
+import com.lulu.product.dto.ProductResponse;
+import com.lulu.product.model.ProductModel;
 import com.lulu.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -104,16 +107,33 @@ public class OrderMapper {
         List<DetailOrderResponse> detalles = order.getProductos().stream()
                 .map(d -> {
                     DetailOrderResponse det = new DetailOrderResponse();
-                    det.setProductoId(d.getProducto().getId());
-                    det.setNombreProducto(d.getProducto().getName());
+
+                    ProductModel producto = d.getProducto();
+
+                    CategoryResponse categoria = new CategoryResponse();
+                    categoria.setId(producto.getCategoria().getId());
+                    categoria.setNombre(producto.getCategoria().getNombre());
+                    categoria.setDescripcion(producto.getCategoria().getDescripcion());
+
+                    ProductResponse productoResponse = new ProductResponse();
+                    productoResponse.setId(producto.getId());
+                    productoResponse.setName(producto.getName());
+                    productoResponse.setDescription(producto.getDescription());
+                    productoResponse.setPrice(producto.getPrice());
+                    productoResponse.setCategoria(categoria);
+                    productoResponse.setStock(producto.getStock());
+
+                    det.setProducto(productoResponse);
                     det.setCantidad(d.getCantidad());
                     det.setPrecioUnitario(d.getPrecioUnitario());
                     det.setSubtotal(d.getCantidad() * d.getPrecioUnitario());
+
                     return det;
                 })
                 .collect(Collectors.toList());
 
         response.setDetalles(detalles);
+
         return response;
     }
 }

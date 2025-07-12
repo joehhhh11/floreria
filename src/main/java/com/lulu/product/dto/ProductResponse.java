@@ -1,5 +1,6 @@
 package com.lulu.product.dto;
 
+import com.lulu.reviews.dto.ReviewResponse;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,4 +17,6 @@ public class ProductResponse {
     private Boolean destacado;
     private CategoryResponse categoria;
     private LocalDateTime fechaCreacion;
+    private List<ReviewResponse> reviews;
+
 }

@@ -31,10 +31,15 @@ public class AuthController {
         return authService.login(request, httpRequest);
     }
 
-    // AuthController.java
+    //clerk
     @PostMapping("/register/clerk")
     public ResponseEntity<RegisterResponse> registerClerk(@RequestBody ClerkRequest request) {
         return ResponseEntity.ok(authService.registerWithClerk(request));
+    }
+    @PostMapping("/clerk-login")
+    public ResponseEntity<LoginResponse> loginWithClerk(@RequestBody ClerkRequest request) {
+        LoginResponse response = authService.loginWithClerk(request);
+        return ResponseEntity.ok(response);
     }
 
 }

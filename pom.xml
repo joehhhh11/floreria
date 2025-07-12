@@ -136,7 +136,12 @@
 			<version>5.0.0</version> <!-- Usa la versión compatible con Spring Boot 3.x -->
 			<scope>provided</scope>
 		</dependency>
-		<!-- pom.xml -->
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>8.0.1.Final</version> <!-- O una versión reciente compatible con tu stack -->
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>

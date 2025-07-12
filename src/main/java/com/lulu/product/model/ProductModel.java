@@ -1,5 +1,6 @@
 package com.lulu.product.model;
 
+import com.lulu.reviews.model.ReviewModel;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -39,6 +40,9 @@ public class ProductModel {
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImageModel> imagenes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ReviewModel> reviews = new ArrayList<>();
 
 
 }
