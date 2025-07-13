@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -67,4 +68,20 @@ class AuthServiceTest {
         verify(userRepository).save(any(UserModel.class));
         verify(jwtService).generateToken(savedUser);
     }
+    @Test
+    void testRegistroFallaPorUsernameExistente() {
+        RegisterRequest request = new RegisterRequest();
+        request.setUsername("lulu123");
+        request.setCorreo("nuevo@mail.com");
+
+        when(userRepository.existsByUsername("lulu123")).thenReturn(true);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            authService.register(request);
+        });
+
+        assertTrue(exception.getMessage().contains("El username ya esta en uso"));
+        verify(userRepository, never()).save(any());
+    }
+
 }

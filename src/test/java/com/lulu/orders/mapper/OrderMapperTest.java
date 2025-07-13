@@ -225,7 +225,7 @@ class OrderMapperTest {
         assertNotNull(result.getDetalles());
         assertEquals(1, result.getDetalles().size());
         assertEquals(1L, result.getDetalles().get(0).getProductoId());
-        assertEquals("Rosa Roja", result.getDetalles().get(0).getNombreProducto());
+        assertEquals("Rosa Roja", result.getDetalles().get(0).getProducto().getName());
         assertEquals(2, result.getDetalles().get(0).getCantidad());
         assertEquals(25.99, result.getDetalles().get(0).getPrecioUnitario());
     }

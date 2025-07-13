@@ -107,21 +107,23 @@ public class OrderMapper {
         List<DetailOrderResponse> detalles = order.getProductos().stream()
                 .map(d -> {
                     DetailOrderResponse det = new DetailOrderResponse();
-
                     ProductModel producto = d.getProducto();
-
-                    CategoryResponse categoria = new CategoryResponse();
-                    categoria.setId(producto.getCategoria().getId());
-                    categoria.setNombre(producto.getCategoria().getNombre());
-                    categoria.setDescripcion(producto.getCategoria().getDescripcion());
+                    det.setProductoId(producto.getId());
 
                     ProductResponse productoResponse = new ProductResponse();
                     productoResponse.setId(producto.getId());
                     productoResponse.setName(producto.getName());
                     productoResponse.setDescription(producto.getDescription());
                     productoResponse.setPrice(producto.getPrice());
-                    productoResponse.setCategoria(categoria);
                     productoResponse.setStock(producto.getStock());
+
+                    if (producto.getCategoria() != null) {
+                        CategoryResponse categoria = new CategoryResponse();
+                        categoria.setId(producto.getCategoria().getId());
+                        categoria.setNombre(producto.getCategoria().getNombre());
+                        categoria.setDescripcion(producto.getCategoria().getDescripcion());
+                        productoResponse.setCategoria(categoria);
+                    }
 
                     det.setProducto(productoResponse);
                     det.setCantidad(d.getCantidad());

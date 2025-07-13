@@ -1,2 +1,8 @@
-com\lulu\auth\service\AuthServiceTest.class
+com\lulu\product\mapper\ProductMapperTest.class
+com\lulu\orders\service\OrderServiceTest.class
+com\lulu\product\service\ProductServiceTest.class
+com\lulu\payment\PaymentControllerTest.class
 com\lulu\SigisAppApplicationTests.class
+com\lulu\orders\service\OrderFactoryTest.class
+com\lulu\orders\mapper\OrderMapperTest.class
+com\lulu\product\controller\ProductControllerTestSimple.class
