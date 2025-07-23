@@ -18,6 +18,7 @@ public class OrderResponse {
     private Double descuentoAplicado;
     private Double totalFinal;
     private String cuponAplicado;
+    private String estado;
     private UserResumen user;
     private List<DetailOrderResponse> detalles;
 }

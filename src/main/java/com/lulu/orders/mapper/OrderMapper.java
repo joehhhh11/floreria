@@ -44,7 +44,7 @@ public class OrderMapper {
     }
 
     public void updateEntityFromRequest(OrderModel order, OrderRequest request, UserModel user, CuponModel cupon) {
-        // Logging de depuración para validar productos recibidos
+
         logger.debug("Actualizando orden con productos: {}", 
                     request.getProductos().stream()
                            .map(p -> "ID:" + p.getProductoId())
@@ -53,6 +53,7 @@ public class OrderMapper {
 
         order.setDireccionEnvio(request.getDireccionEnvio());
         order.setTipoEntrega(request.getTipoEntrega());
+        order.setEstado(request.getEstado());
         order.setUser(user);
         order.setCuponModel(cupon);
         order.setFechaCreacion(LocalDateTime.now());
@@ -96,6 +97,7 @@ public class OrderMapper {
         response.setTipoEntrega(order.getTipoEntrega());
         response.setFechaCreacion(order.getFechaCreacion().toString());
         response.setSubtotal(subtotal);
+        response.setEstado(order.getEstado());
         response.setDescuentoAplicado(descuento);
         response.setTotalFinal(subtotal - descuento);
 

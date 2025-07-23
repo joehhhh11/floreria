@@ -2,7 +2,10 @@ package com.lulu.reviews.controller;
 
 import com.lulu.auth.model.UserModel;
 import com.lulu.auth.security.AuthenticatedUserProvider;
+import com.lulu.product.model.ProductModel;
+import com.lulu.product.repository.ProductRepository;
 import com.lulu.product.service.ProductService;
+import com.lulu.reviews.dto.ReviewRequest;
 import com.lulu.reviews.model.ReviewModel;
 import com.lulu.reviews.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +23,29 @@ public class ReviewController {
     private AuthenticatedUserProvider authenticatedUserProvider;
     @Autowired
     private ReviewService reviewService;
+    @Autowired
+    private ProductRepository productRepository;
 
     @PostMapping
-    public ResponseEntity<ReviewModel> createReview(@RequestBody ReviewModel reviewRequest) {
+    public ResponseEntity<ReviewModel> createReview(@RequestBody ReviewRequest request) {
         UserModel currentUser = authenticatedUserProvider.getCurrentUser();
 
         if (currentUser == null || currentUser.getId() == null) {
             throw new RuntimeException("Usuario no autenticado o sin ID válido");
         }
 
-        reviewRequest.setUser(currentUser);
+        ProductModel product = productRepository.findById(request.getProductoId())
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-        reviewRequest.setFechaReview(LocalDateTime.now());
 
-        return ResponseEntity.ok(reviewService.saveReview(reviewRequest));
+        ReviewModel review = new ReviewModel();
+        review.setComentario(request.getComentario());
+        review.setPuntuacion(request.getPuntuacion());
+        review.setUser(currentUser);
+        review.setProducto(product);
+        review.setFechaReview(LocalDateTime.now());
+
+        return ResponseEntity.ok(reviewService.saveReview(review));
     }
 
 }

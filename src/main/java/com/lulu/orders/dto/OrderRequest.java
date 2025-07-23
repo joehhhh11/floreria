@@ -10,6 +10,7 @@ public class OrderRequest {
     private String direccionEnvio;
 
     private String tipoEntrega;
+    private String estado;
 
     private Long cuponId;
     private List<ProducQuantity> productos;
