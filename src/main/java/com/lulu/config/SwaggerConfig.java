@@ -6,9 +6,12 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
@@ -16,6 +19,14 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
+                .servers(List.of(
+                        new Server()
+                                .url("https://floreria-production.up.railway.app")
+                                .description("Servidor de Producción"),
+                        new Server()
+                                .url("http://localhost:8080")
+                                .description("Servidor Local")
+                ))
                 .info(new Info()
                         .title("🌸 Floreria API")
                         .version("1.0.0")
@@ -23,7 +34,7 @@ public class SwaggerConfig {
                         .contact(new Contact()
                                 .name("Equipo de Desarrollo")
                                 .email("admin@floreria.com")
-                                .url("https://web-production-98e3.up.railway.app"))
+                                .url("https://floreria-production.up.railway.app"))
                         .license(new License()
                                 .name("MIT License")
                                 .url("https://opensource.org/licenses/MIT")))

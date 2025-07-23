@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+@CrossOrigin(originPatterns = "*", allowCredentials = "true")
 public class ProductController {
     
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
@@ -30,7 +31,36 @@ public class ProductController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<ProductResponse> createProduct(@ModelAttribute ProductRequest request) {
-        logger.info("Creando nuevo producto");
+        try {
+            logger.info("Creando nuevo producto: name={}, categoryId={}, price={}, stock={}", 
+                       request.getName(), request.getCategoriaId(), request.getPrice(), request.getStock());
+            
+            // Validación básica
+            if (request.getName() == null || request.getName().trim().isEmpty()) {
+                logger.error("Nombre del producto es requerido");
+                return ResponseEntity.badRequest().build();
+            }
+            if (request.getCategoriaId() == null) {
+                logger.error("CategoryId es requerido");
+                return ResponseEntity.badRequest().build();
+            }
+            
+            ProductResponse response = productService.createProduct(request);
+            logger.info("Producto creado exitosamente con ID: {}", response.getId());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            logger.error("Error al crear producto: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping(
+            value = "/json",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ProductResponse> createProductJson(@RequestBody ProductRequest request) {
+        logger.info("Creando nuevo producto desde JSON");
         ProductResponse response = productService.createProduct(request);
         logger.info("Producto creado exitosamente con ID: {}", response.getId());
         return ResponseEntity.ok(response);

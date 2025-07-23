@@ -48,6 +48,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**","/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/category/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/products/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").authenticated()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()
                 )
@@ -70,16 +73,25 @@ public class SecurityConfig {
                 .build();
     }
 
-    // CORS configurado de forma segura
+    // CORS configurado para Swagger UI y aplicación
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Permitir TODOS los orígenes temporalmente para Swagger
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedMethod("*");
+        // Permitir todos los orígenes temporalmente para Swagger UI
+        configuration.addAllowedOriginPattern("*");
+        
+        // Permitir todos los métodos HTTP
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"));
+        
+        // Permitir todos los headers
         configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(false); // Debe ser false con allowedOrigin("*")
+        
+        // Exponer headers importantes
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        
+        // Permitir credenciales (necesario para JWT)
+        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
