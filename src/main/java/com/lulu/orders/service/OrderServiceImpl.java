@@ -11,6 +11,8 @@ import com.lulu.orders.model.OrderModel;
 import com.lulu.orders.repository.CuponRepository;
 import com.lulu.orders.repository.OrderRepository;
 import com.lulu.product.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Autowired
     private ProductRepository productRepository;
@@ -41,10 +45,15 @@ public class OrderServiceImpl implements OrderService {
     private UserRepository userRepository;
     @Override
     public OrderResponse createOrder(OrderRequest request) {
+            logger.info("Iniciando creación de orden para usuario autenticado");
+            
             UserModel currentUser = authenticatedUserProvider.getCurrentUser();
             if (currentUser == null || currentUser.getId() == null) {
+                logger.error("Intento de crear orden sin usuario autenticado válido");
                 throw new RuntimeException("Usuario no autenticado o sin id válido");
             }
+            
+            logger.info("Usuario autenticado: {} creando orden", currentUser.getUsername());
 
             CuponModel cupon = null;
             Long cuponId = request.getCuponId();

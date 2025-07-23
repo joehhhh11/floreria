@@ -12,6 +12,8 @@ import com.lulu.product.dto.CategoryResponse;
 import com.lulu.product.dto.ProductResponse;
 import com.lulu.product.model.ProductModel;
 import com.lulu.product.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class OrderMapper {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderMapper.class);
 
     @Autowired
     private ProductRepository productRepository;
@@ -32,17 +36,20 @@ public class OrderMapper {
         if (cupon != null && cupon.getId() == null) {
             throw new IllegalArgumentException("Cupón con ID inválido");
         }
-        System.out.println("📦LLEGOOO");
+        logger.info("Creando nueva orden para usuario: {} con {} productos", 
+                   user.getUsername(), request.getProductos().size());
         OrderModel order = new OrderModel();
         updateEntityFromRequest(order, request, user, cupon);
         return order;
     }
 
     public void updateEntityFromRequest(OrderModel order, OrderRequest request, UserModel user, CuponModel cupon) {
-        // Logs para debuguear productoId en cada detalle antes de procesar
-        request.getProductos().forEach(p -> {
-            System.out.println("ProductoId recibido: " + p.getProductoId());
-        });
+        // Logging de depuración para validar productos recibidos
+        logger.debug("Actualizando orden con productos: {}", 
+                    request.getProductos().stream()
+                           .map(p -> "ID:" + p.getProductoId())
+                           .reduce((a, b) -> a + ", " + b)
+                           .orElse("ninguno"));
 
         order.setDireccionEnvio(request.getDireccionEnvio());
         order.setTipoEntrega(request.getTipoEntrega());

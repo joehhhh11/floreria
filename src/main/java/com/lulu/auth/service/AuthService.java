@@ -8,10 +8,13 @@ import com.lulu.auth.dto.RegisterResponse;
 import com.lulu.auth.model.*;
 import com.lulu.auth.repository.*;
 import com.lulu.auth.security.JWTService;
+import com.lulu.logging.utils.LogUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.Lists;
 import com.google.common.base.Preconditions; 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +25,8 @@ import java.util.Optional;
 
 @Service
 public class AuthService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     @Autowired
     private UserCredentialsRepository userCredentialsRepository;
@@ -48,15 +53,21 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     public RegisterResponse register(RegisterRequest request) {
+        logger.info("Intento de registro para usuario: {}", request.getUsername());
+        
         if (StringUtils.isBlank(request.getUsername())) {
+            logger.warn("Intento de registro con username vacío");
             throw new RuntimeException("El nombre de usuario no puede estar vacío");
         }
         if (StringUtils.isBlank(request.getCorreo()) || !StringUtils.contains(request.getCorreo(), "@")) {
+            logger.warn("Intento de registro con correo inválido: {}", request.getCorreo());
             throw new RuntimeException("Correo no válido");
         }
 
-        Preconditions.checkArgument(!userRepository.existsByUsername(request.getUsername()), "El username ya esta en uso");
-        Preconditions.checkArgument(!userRepository.existsByCorreo(request.getCorreo()), "El correo ya esta en uso");
+        Preconditions.checkArgument(!userRepository.existsByUsername(request.getUsername()), 
+                                  "El username ya esta en uso");
+        Preconditions.checkArgument(!userRepository.existsByCorreo(request.getCorreo()), 
+                                  "El correo ya esta en uso");
 
         UserModel user = new UserModel();
         user.setNombre(request.getNombre());
@@ -72,11 +83,20 @@ public class AuthService {
         String tipoRol = StringUtils.isBlank(request.getRol()) ? "usuario" : request.getRol();
 
         RolModel rolSeleccionado = rolRepository.findByTipoRol(tipoRol)
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + tipoRol));
+                .orElseThrow(() -> {
+                    logger.error("Rol no encontrado durante registro: {}", tipoRol);
+                    return new RuntimeException("Rol no encontrado: " + tipoRol);
+                });
 
         user.setRol(rolSeleccionado);
 
         UserModel savedUser = userRepository.save(user);
+        logger.info("Usuario registrado exitosamente: {} con rol: {}", 
+                   savedUser.getUsername(), savedUser.getRol().getTipoRol());
+        
+        // Log de evento de negocio
+        LogUtils.BusinessEvent.userRegistered(logger, savedUser.getUsername(), 
+                                            savedUser.getCorreo(), savedUser.getRol().getTipoRol());
 
         CredentialsModel credentials = new CredentialsModel();
         credentials.setUser(savedUser);
@@ -130,12 +150,21 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request, HttpServletRequest httpRequest) {
+        logger.info("Intento de login para usuario: {}", request.getUsername());
+        
         Optional<UserModel> userOptional = Optional.ofNullable(userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado")));
+                .orElseThrow(() -> {
+                    logger.warn("Intento de login con usuario inexistente: {}", request.getUsername());
+                    // Log de evento de negocio para login fallido
+                    LogUtils.BusinessEvent.userLogin(logger, request.getUsername(), 
+                                                   httpRequest.getRemoteAddr(), false);
+                    return new RuntimeException("Usuario no encontrado");
+                }));
 
         UserModel user = userOptional.get();
 
         if (user.getUser2FA() != null && user.getUser2FA().getEnabled()) {
+            logger.info("Login requiere 2FA para usuario: {}", user.getUsername());
             throw new RuntimeException("2FA requerido");
         }
 
@@ -154,6 +183,13 @@ public class AuthService {
         if (user.getRol() != null && user.getRol().getModulos() != null) {
             modulos = Lists.transform(user.getRol().getModulos(), modulo -> modulo.getNombre());
         }
+
+        logger.info("Login exitoso para usuario: {} desde IP: {}", 
+                   user.getUsername(), httpRequest.getRemoteAddr());
+
+        // Log de evento de negocio
+        LogUtils.BusinessEvent.userLogin(logger, user.getUsername(), 
+                                       httpRequest.getRemoteAddr(), true);
 
         return new LoginResponse(jwt, user.getUsername(), user.getRol().getTipoRol(), modulos);
     }
