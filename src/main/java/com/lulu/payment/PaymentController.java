@@ -36,8 +36,9 @@ public class PaymentController {
 
     @PostMapping("/pay-order/{orderId}")
     public String createCheckoutSession(@PathVariable Long orderId) throws Exception {
-        OrderModel order = orderRepository.findById(orderId)
+        OrderModel order = orderRepository.findByIdWithProductos(orderId)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+
 
         // Convertimos los productos a lineItems de Stripe
         List<SessionCreateParams.LineItem> lineItems = order.getProductos().stream().map(detalle ->
