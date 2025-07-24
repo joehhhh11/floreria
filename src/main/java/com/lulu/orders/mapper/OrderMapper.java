@@ -36,8 +36,8 @@ public class OrderMapper {
         if (cupon != null && cupon.getId() == null) {
             throw new IllegalArgumentException("Cupón con ID inválido");
         }
-        logger.info("Creando nueva orden para usuario: {} con {} productos", 
-                   user.getUsername(), request.getProductos().size());
+        logger.info("Creando nueva orden para usuario: {} con {} productos",
+                user.getUsername(), request.getProductos().size());
         OrderModel order = new OrderModel();
         updateEntityFromRequest(order, request, user, cupon);
         return order;
@@ -70,7 +70,10 @@ public class OrderMapper {
                     .mapToDouble(d -> d.getCantidad() * d.getPrecioUnitario())
                     .sum();
 
-            double descuento = (cupon != null) ? cupon.getDescuentoPorcentaje() : 0.0;
+            double descuento = 0.0;
+            if (cupon != null && cupon.getDescuentoPorcentaje() != null) {
+                descuento = subtotal * (cupon.getDescuentoPorcentaje() / 100.0);
+            }
             order.setTotal(subtotal - descuento);
         }
 
@@ -82,16 +85,16 @@ public class OrderMapper {
         order.setFechaCreacion(LocalDateTime.now());
     }
 
-
-
     public OrderResponse toResponse(OrderModel order) {
         double subtotal = order.getProductos().stream()
                 .mapToDouble(d -> d.getCantidad() * d.getPrecioUnitario())
                 .sum();
 
-        double descuento = (order.getCuponModel() != null)
+        double descuentoPorcentaje = (order.getCuponModel() != null)
                 ? order.getCuponModel().getDescuentoPorcentaje()
                 : 0.0;
+
+        double descuento = subtotal * (descuentoPorcentaje / 100.0);
 
         OrderResponse response = new OrderResponse();
         response.setPedidoId(order.getId());
@@ -99,8 +102,8 @@ public class OrderMapper {
         response.setTipoEntrega(order.getTipoEntrega());
         response.setFechaCreacion(order.getFechaCreacion().toString());
         response.setSubtotal(subtotal);
+        response.setDescuentoAplicado(descuento); // Monto del descuento aplicado
         response.setEstado(order.getEstado());
-        response.setDescuentoAplicado(descuento);
         response.setTotalFinal(subtotal - descuento);
 
         if (order.getCuponModel() != null) {
@@ -142,8 +145,7 @@ public class OrderMapper {
                     det.setSubtotal(d.getCantidad() * d.getPrecioUnitario());
 
                     return det;
-                })
-                .collect(Collectors.toList());
+                }).collect(Collectors.toList());
 
         response.setDetalles(detalles);
 

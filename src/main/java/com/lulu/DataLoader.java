@@ -28,16 +28,13 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Insertar categorías
         insertCategoryIfNotExists("Flores", "Flores frescas y variadas");
-        insertCategoryIfNotExists("Ramos", "Ramos personalizados para toda ocasión");
-        insertCategoryIfNotExists("Globos", "Globos de helio y decorativos");
-        insertCategoryIfNotExists("Peluches", "Peluches suaves y adorables");
+        insertCategoryIfNotExists("Arreglo Floral", "Ramos personalizados para toda ocasión");
+        insertCategoryIfNotExists("Globos Decorativos", "Globos de helio y decorativos");
+        insertCategoryIfNotExists("Regalos Personalizados", "Peluches suaves y adorables");
         
-        // Crear roles por defecto
         createRolesIfNotExists();
         
-        // Crear usuario admin por defecto
         createAdminUserIfNotExists();
     }
 

@@ -114,7 +114,11 @@ public class AuthService {
         return new RegisterResponse(jwt);
     }
     public RegisterResponse registerWithClerk(ClerkRequest request) {
-        Optional<UserModel> optionalUser = userRepository.findByCorreo(request.getCorreo());
+        Optional<UserModel> optionalUser = userRepository.findByUsername(request.getUsername());
+
+
+
+
 
         UserModel user;
 

@@ -22,35 +22,40 @@ public class AuditLoggingFilter extends OncePerRequestFilter {
     private static final Logger auditLogger = LoggerFactory.getLogger("AUDIT");
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, 
-                                    HttpServletResponse response, 
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        
-        // Generar ID único para la request
+
         String requestId = UUID.randomUUID().toString().substring(0, 8);
-        
-        // Usar MDC (Mapped Diagnostic Context) para contexto de logs
         MDC.put("requestId", requestId);
         MDC.put("userIP", getClientIpAddress(request));
-        
+
         long startTime = System.currentTimeMillis();
-        
+
         try {
-            // Log de entrada
             logRequest(request, requestId);
-            
-            filterChain.doFilter(request, response);
-            
-            // Log de salida
+            filterChain.doFilter(request, response); // Puede lanzar excepción
             long duration = System.currentTimeMillis() - startTime;
             logResponse(request, response, requestId, duration);
-            
+
+        } catch (Exception ex) {
+            long duration = System.currentTimeMillis() - startTime;
+
+            logger.error("❌ Uncaught exception in filter [{}]: {}", requestId, ex.getMessage(), ex);
+
+            // También puedes loguear en audit si lo deseas
+            auditLogger.error("AUDIT_ERROR [{}] {} {} | Exception: {} | Duration: {} ms",
+                    requestId, request.getMethod(), request.getRequestURI(),
+                    ex.getClass().getSimpleName(), duration);
+
+            throw ex;
+
         } finally {
-            // Limpiar MDC
             MDC.clear();
         }
     }
-    
+
+
     private void logRequest(HttpServletRequest request, String requestId) {
         String method = request.getMethod();
         String uri = request.getRequestURI();

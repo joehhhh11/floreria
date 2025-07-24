@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
@@ -21,14 +20,16 @@ public class PaymentController {
 
     @Value("${stripe.cancel.url}")
     private String cancelUrl;
+
     @Autowired
     private OrderRepository orderRepository;
+
     @PostMapping("/confirm-payment/{orderId}")
     public String confirmPayment(@PathVariable Long orderId) {
         OrderModel order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
 
-        order.setEstado("PAGADA"); // o el valor que uses
+        order.setEstado("PAGADA");
         orderRepository.save(order);
 
         return "Orden marcada como pagada correctamente.";
@@ -39,35 +40,46 @@ public class PaymentController {
         OrderModel order = orderRepository.findByIdWithProductos(orderId)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
 
+        double subtotal = order.getProductos().stream()
+                .mapToDouble(detalle -> detalle.getCantidad() * detalle.getPrecioUnitario())
+                .sum();
 
-        // Convertimos los productos a lineItems de Stripe
-        List<SessionCreateParams.LineItem> lineItems = order.getProductos().stream().map(detalle ->
-                SessionCreateParams.LineItem.builder()
-                        .setQuantity(detalle.getCantidad().longValue())
-                        .setPriceData(
-                                SessionCreateParams.LineItem.PriceData.builder()
-                                        .setCurrency("usd")
-                                        .setUnitAmount((long) (detalle.getPrecioUnitario() * 100)) // en centavos
-                                        .setProductData(
-                                                SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                        .setName(detalle.getProducto().getCategoria().getNombre()) // nombre del producto real
-                                                        .build()
-                                        )
-                                        .build()
-                        )
-                        .build()
-        ).collect(Collectors.toList());
+        double total = order.getTotal();
+        double descuentoRatio = total / subtotal; //
+
+        List<SessionCreateParams.LineItem> lineItems = order.getProductos().stream().map(detalle -> {
+            long cantidad = detalle.getCantidad().longValue();
+
+            double originalUnitPrice = detalle.getPrecioUnitario();
+
+            long adjustedUnitPrice = Math.round(originalUnitPrice * descuentoRatio * 100);
+
+            return SessionCreateParams.LineItem.builder()
+                    .setQuantity(cantidad)
+                    .setPriceData(
+                            SessionCreateParams.LineItem.PriceData.builder()
+                                    .setCurrency("usd")
+                                    .setUnitAmount(adjustedUnitPrice)
+                                    .setProductData(
+                                            SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                    .setName(detalle.getProducto().getName())
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .build();
+        }).collect(Collectors.toList());
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .addAllLineItem(lineItems)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl(successUrl + "?orderId=" + orderId)
                 .setCancelUrl(cancelUrl)
-                .putMetadata("order_id", orderId.toString()) // para el webhook
+                .putMetadata("order_id", orderId.toString())
                 .build();
 
         Session session = Session.create(params);
-        return session.getUrl(); // frontend redirige a esta URL
+        return session.getUrl();
     }
 
 }

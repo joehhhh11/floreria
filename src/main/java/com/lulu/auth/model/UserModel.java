@@ -22,8 +22,10 @@ public class UserModel {
     private String apellidos;
     private String telefono;
     private String dni;
+    @Column(unique = true)
     private String username;
     private String password;
+    @Column(unique = true)
     private String correo;
     private String estado;
 
