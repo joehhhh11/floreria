@@ -1,5 +1,6 @@
 package com.lulu.reviews.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.lulu.auth.model.UserModel;
 import com.lulu.product.model.ProductModel;
 import jakarta.persistence.*;
@@ -24,6 +25,7 @@ public class ReviewModel {
     private LocalDateTime fechaReview = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "producto_id")
     private ProductModel producto;
 

@@ -45,11 +45,34 @@ public class OrderMapper {
 
     public void updateEntityFromRequest(OrderModel order, OrderRequest request, UserModel user, CuponModel cupon) {
 
-        logger.debug("Actualizando orden con productos: {}", 
+        if (request.getProductos() != null) {
+            logger.debug("Actualizando orden con productos: {}",
                     request.getProductos().stream()
-                           .map(p -> "ID:" + p.getProductoId())
-                           .reduce((a, b) -> a + ", " + b)
-                           .orElse("ninguno"));
+                            .map(p -> "ID:" + p.getProductoId())
+                            .reduce((a, b) -> a + ", " + b)
+                            .orElse("ninguno"));
+
+            List<OrderDetailModel> detalles = request.getProductos().stream()
+                    .map(pq -> {
+                        var producto = productRepository.findById(pq.getProductoId())
+                                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+                        OrderDetailModel detalle = new OrderDetailModel();
+                        detalle.setOrder(order);
+                        detalle.setProducto(producto);
+                        detalle.setCantidad(pq.getCantidad());
+                        detalle.setPrecioUnitario(producto.getPrice());
+                        return detalle;
+                    }).collect(Collectors.toList());
+
+            order.setProductos(detalles);
+
+            double subtotal = detalles.stream()
+                    .mapToDouble(d -> d.getCantidad() * d.getPrecioUnitario())
+                    .sum();
+
+            double descuento = (cupon != null) ? cupon.getDescuentoPorcentaje() : 0.0;
+            order.setTotal(subtotal - descuento);
+        }
 
         order.setDireccionEnvio(request.getDireccionEnvio());
         order.setTipoEntrega(request.getTipoEntrega());
@@ -57,29 +80,8 @@ public class OrderMapper {
         order.setUser(user);
         order.setCuponModel(cupon);
         order.setFechaCreacion(LocalDateTime.now());
-
-        List<OrderDetailModel> detalles = request.getProductos().stream()
-                .map(pq -> {
-                    var producto = productRepository.findById(pq.getProductoId())
-                            .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
-                    OrderDetailModel detalle = new OrderDetailModel();
-                    detalle.setOrder(order);
-                    detalle.setProducto(producto);
-                    detalle.setCantidad(pq.getCantidad());
-                    detalle.setPrecioUnitario(producto.getPrice());
-                    return detalle;
-                })
-                .collect(Collectors.toList());
-
-        order.setProductos(detalles);
-
-        double subtotal = detalles.stream()
-                .mapToDouble(d -> d.getCantidad() * d.getPrecioUnitario())
-                .sum();
-
-        double descuento = (cupon != null) ? cupon.getDescuentoPorcentaje() : 0.0;
-        order.setTotal(subtotal - descuento);
     }
+
 
 
     public OrderResponse toResponse(OrderModel order) {

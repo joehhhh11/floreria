@@ -11,4 +11,7 @@ public interface OrderService {
     void deleteOrder(Long id);
     OrderResponse getOrder(Long id);
     List<OrderResponse> getAllOrders();
+    OrderResponse actualizarEstadoOrden(Long id, String nuevoEstado);
+    List<OrderResponse> getMyOrders();
+
 }

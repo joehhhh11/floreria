@@ -2,6 +2,7 @@ package com.lulu.product.controller;
 
 import com.lulu.product.dto.ProductRequest;
 import com.lulu.product.dto.ProductResponse;
+import com.lulu.product.mapper.ProductMapper;
 import com.lulu.product.model.CategoryModel;
 import com.lulu.product.model.ProductModel;
 import com.lulu.product.service.ProductService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
@@ -26,6 +28,9 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private ProductMapper productMapper;
+
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
@@ -35,7 +40,6 @@ public class ProductController {
             logger.info("Creando nuevo producto: name={}, categoryId={}, price={}, stock={}", 
                        request.getName(), request.getCategoriaId(), request.getPrice(), request.getStock());
             
-            // Validación básica
             if (request.getName() == null || request.getName().trim().isEmpty()) {
                 logger.error("Nombre del producto es requerido");
                 return ResponseEntity.badRequest().build();
@@ -90,8 +94,11 @@ public class ProductController {
     }
 
     @GetMapping("/category/{id}")
-    public List<ProductModel> getProductsByCategory(@PathVariable("id") Long id) {
-        return productService.getProductsByCategory(id);
+    public List<ProductResponse> getByCategory(@PathVariable Long id) {
+        return productService.getProductsByCategory(id)
+                .stream()
+                .map(productMapper::toResponse)
+                .collect(Collectors.toList());
     }
     @PostMapping("/import")
     public ResponseEntity<String> importFromExcel(@RequestParam("file") MultipartFile file) {

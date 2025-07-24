@@ -69,6 +69,27 @@ public class OrderServiceImpl implements OrderService {
 
 
     }
+    @Override
+    public OrderResponse actualizarEstadoOrden(Long id, String nuevoEstado) {
+        OrderModel order = orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada con id: " + id));
+
+        order.setEstado(nuevoEstado);
+        OrderModel updated = orderRepository.save(order);
+        return orderMapper.toResponse(updated);
+    }
+    @Override
+    public List<OrderResponse> getMyOrders() {
+        UserModel currentUser = authenticatedUserProvider.getCurrentUser();
+
+        if (currentUser == null || currentUser.getId() == null) {
+            throw new RuntimeException("Usuario no autenticado o sin ID válido");
+        }
+
+        return orderRepository.findByUserId(currentUser.getId()).stream()
+                .map(orderMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public OrderResponse updateOrder(Long id, OrderRequest request) {

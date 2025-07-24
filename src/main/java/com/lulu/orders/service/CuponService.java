@@ -6,6 +6,7 @@ import com.lulu.orders.repository.CuponRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class CuponService {
@@ -28,5 +29,26 @@ public class CuponService {
         cupon.setFechaExpiracion(dto.getFechaExpiracion());
 
         return cuponRepository.save(cupon);
+    }
+    public CuponModel obtenerPorCodigo(String codigo) {
+        return cuponRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new RuntimeException("Cupón no encontrado"));
+    }
+
+    public List<CuponModel> obtenerTodos() {
+        return cuponRepository.findAll();
+    }
+    public CuponModel actualizarEstadoCupon(String codigo, boolean nuevoEstado) {
+        CuponModel cupon = cuponRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new RuntimeException("Cupón no encontrado"));
+
+        cupon.setActive(nuevoEstado);
+        return cuponRepository.save(cupon);
+    }
+    public void eliminarCupon(String codigo) {
+        CuponModel cupon = cuponRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new RuntimeException("Cupón no encontrado"));
+
+        cuponRepository.delete(cupon);
     }
 }

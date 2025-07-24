@@ -57,7 +57,7 @@ public class AuditLoggingFilter extends OncePerRequestFilter {
         String queryString = request.getQueryString();
         String userAgent = request.getHeader("User-Agent");
         String referer = request.getHeader("Referer");
-        
+
         // Log básico para todas las requests
         logger.info("REQUEST [{}] {} {}{}", 
                    requestId, method, uri, 

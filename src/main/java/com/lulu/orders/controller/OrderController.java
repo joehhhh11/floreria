@@ -36,6 +36,14 @@ public class OrderController {
     public ResponseEntity<OrderResponse> getOrder(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.getOrder(id));
     }
+    @PutMapping("/{id}/estado")
+    public ResponseEntity<OrderResponse> actualizarEstado(@PathVariable Long id, @RequestParam String estado) {
+        return ResponseEntity.ok(orderService.actualizarEstadoOrden(id, estado));
+    }
+    @GetMapping("/me")
+    public ResponseEntity<List<OrderResponse>> getMisOrdenes() {
+        return ResponseEntity.ok(orderService.getMyOrders());
+    }
 
     @GetMapping
     public ResponseEntity<List<OrderResponse>> getAllOrders() {

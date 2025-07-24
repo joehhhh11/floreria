@@ -1,5 +1,6 @@
 package com.lulu.product.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.lulu.reviews.model.ReviewModel;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -42,6 +43,7 @@ public class ProductModel {
     private List<ImageModel> imagenes = new ArrayList<>();
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<ReviewModel> reviews = new ArrayList<>();
 
 

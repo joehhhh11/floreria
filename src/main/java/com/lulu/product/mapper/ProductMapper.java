@@ -103,9 +103,8 @@ public class ProductMapper {
         product.setStock(request.getStock());
         product.setDestacado(request.getDestacado());
 
-        // Validar que imageUrls no sea null
         List<ImageModel> imagenes = Optional.ofNullable(request.getImageUrls())
-                .orElse(List.of()) // si es null, usa una lista vacía
+                .orElse(List.of())
                 .stream()
                 .map(url -> {
                     ImageModel img = new ImageModel();

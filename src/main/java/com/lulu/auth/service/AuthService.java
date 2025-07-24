@@ -114,38 +114,46 @@ public class AuthService {
         return new RegisterResponse(jwt);
     }
     public RegisterResponse registerWithClerk(ClerkRequest request) {
-        if (StringUtils.isBlank(request.getUsername())) {
-            throw new RuntimeException("El nombre de usuario no puede estar vacío");
+        Optional<UserModel> optionalUser = userRepository.findByCorreo(request.getCorreo());
+
+        UserModel user;
+
+        if (optionalUser.isPresent()) {
+            user = optionalUser.get();
+
+            user.setTelefono(request.getTelefono());
+            user.setDni(request.getDni());
+            user.setNombre(request.getNombre());
+            user.setApellidos(request.getApellidos());
+            user.setUsername(request.getUsername());
+
+            user = userRepository.save(user);
+
+        } else {
+            RolModel rol = rolRepository.findByTipoRol("usuario")
+                    .orElseThrow(() -> new RuntimeException("Rol por defecto no encontrado"));
+
+            user = new UserModel();
+            user.setNombre(request.getNombre());
+            user.setApellidos(request.getApellidos());
+            user.setTelefono(request.getTelefono());
+            user.setDni(request.getDni());
+            user.setUsername(request.getUsername());
+            user.setCorreo(request.getCorreo());
+            user.setPassword(null);
+            user.setRol(rol);
+            user.setEstado("Active");
+
+            user = userRepository.save(user);
+
+            TwoFAModel twoFA = new TwoFAModel();
+            twoFA.setUser(user);
+            twoFA.setSecretKey("DEFAULT");
+            twoFA.setEnabled(false);
+            user2FARepository.save(twoFA);
         }
-        if (StringUtils.isBlank(request.getCorreo()) || !StringUtils.contains(request.getCorreo(), "@")) {
-            throw new RuntimeException("Correo no válido");
-        }
 
-        Preconditions.checkArgument(!userRepository.existsByCorreo(request.getCorreo()), "El correo ya está en uso");
-
-        RolModel rol = rolRepository.findByTipoRol("usuario")
-                .orElseThrow(() -> new RuntimeException("Rol por defecto no encontrado"));
-
-        UserModel user = new UserModel();
-        user.setNombre(request.getNombre());
-        user.setApellidos(request.getApellidos());
-        user.setTelefono(request.getTelefono());
-        user.setDni(request.getDni());
-        user.setUsername(request.getUsername());
-        user.setCorreo(request.getCorreo());
-        user.setPassword(null);
-        user.setRol(rol);
-        user.setEstado("Active");
-
-        UserModel savedUser = userRepository.save(user);
-
-        TwoFAModel twoFA = new TwoFAModel();
-        twoFA.setUser(savedUser);
-        twoFA.setSecretKey("DEFAULT");
-        twoFA.setEnabled(false);
-        user2FARepository.save(twoFA);
-
-        String jwt = jwtService.generateToken(savedUser);
+        String jwt = jwtService.generateToken(user);
         return new RegisterResponse(jwt);
     }
 
@@ -155,7 +163,6 @@ public class AuthService {
         Optional<UserModel> userOptional = Optional.ofNullable(userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> {
                     logger.warn("Intento de login con usuario inexistente: {}", request.getUsername());
-                    // Log de evento de negocio para login fallido
                     LogUtils.BusinessEvent.userLogin(logger, request.getUsername(), 
                                                    httpRequest.getRemoteAddr(), false);
                     return new RuntimeException("Usuario no encontrado");
@@ -187,7 +194,6 @@ public class AuthService {
         logger.info("Login exitoso para usuario: {} desde IP: {}", 
                    user.getUsername(), httpRequest.getRemoteAddr());
 
-        // Log de evento de negocio
         LogUtils.BusinessEvent.userLogin(logger, user.getUsername(), 
                                        httpRequest.getRemoteAddr(), true);
 
@@ -200,7 +206,6 @@ public class AuthService {
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
-            // Crear nuevo usuario si no existe
             RolModel rol = rolRepository.findByTipoRol("usuario")
                     .orElseThrow(() -> new RuntimeException("Rol por defecto no encontrado"));
 

@@ -14,7 +14,6 @@ public class ProductRequest {
     private Double price;
     private Integer stock;
     
-    // Hacer los campos opcionales para evitar errores de conversión
     @Schema(type = "array", format = "binary", description = "Imágenes del producto")
     private List<MultipartFile> imagenes = new ArrayList<>();
     
@@ -24,12 +23,10 @@ public class ProductRequest {
     private Boolean destacado = false; // Valor por defecto
     private List<String> imageUrls = new ArrayList<>();
     
-    // Getter personalizado para imagenes que maneja null/empty
     public List<MultipartFile> getImagenes() {
         return imagenes != null ? imagenes : new ArrayList<>();
     }
     
-    // Getter personalizado para imageUrls que maneja null/empty
     public List<String> getImageUrls() {
         return imageUrls != null ? imageUrls : new ArrayList<>();
     }
