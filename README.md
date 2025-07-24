@@ -34,7 +34,7 @@ Una plataforma de e-commerce moderna especializada en la venta de flores para oc
 
 ### Backend
 - **Framework**: Spring Boot 3.4.5
-- **Lenguaje**: Java 21
+- **Lenguaje**: Java 17
 - **Módulos Spring**:
   - Spring MVC (API REST)
   - Spring Data JPA (Persistencia)
@@ -42,8 +42,8 @@ Una plataforma de e-commerce moderna especializada en la venta de flores para oc
   - Spring Validation (Validaciones)
 
 ### Base de Datos
-- **Producción**: MySQL
-- **Desarrollo/Pruebas**: H2 Database
+- **Producción**: PostgreSQL (Railway) / MySQL (Local)
+- **Desarrollo/Pruebas**: MySQL
 
 ### Herramientas de Desarrollo
 - **Build Tool**: Maven
@@ -60,9 +60,9 @@ Una plataforma de e-commerce moderna especializada en la venta de flores para oc
 
 ## 📋 Requisitos del Sistema
 
-- **Java**: JDK 21 o superior
+- **Java**: JDK 17 o superior
 - **Maven**: 3.6 o superior
-- **Base de Datos**: MySQL 8.0+ (producción) / H2 (desarrollo)
+- **Base de Datos**: PostgreSQL (Railway) / MySQL 8.0+ (local)
 - **RAM**: Mínimo 512MB, recomendado 1GB
 - **Espacio**: 100MB para la aplicación + espacio para BD
 
@@ -76,20 +76,23 @@ cd floreria
 
 ### 2. Configurar Base de Datos
 
-#### Para Desarrollo (H2 - Automático)
+#### Para Desarrollo (MySQL)
 ```properties
-# application-dev.properties
-spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.driver-class-name=org.h2.Driver
-spring.jpa.hibernate.ddl-auto=create-drop
+# application.properties
+spring.datasource.url=jdbc:mysql://localhost:3306/prueba2db
+spring.datasource.username=root
+spring.datasource.password=Joehxd123!
+spring.jpa.hibernate.ddl-auto=update
 ```
 
-#### Para Producción (MySQL)
+#### Para Producción (PostgreSQL - Railway)
 ```properties
 # application-prod.properties
-spring.datasource.url=jdbc:mysql://localhost:3306/floreria_db
-spring.datasource.username=tu_usuario
-spring.datasource.password=tu_contraseña
+spring.datasource.url=jdbc:postgresql://postgres.railway.internal:5432/railway
+spring.datasource.username=postgres
+spring.datasource.password=${PGPASSWORD:defaultpassword}
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 spring.jpa.hibernate.ddl-auto=update
 ```
 
@@ -118,7 +121,7 @@ DB_PASSWORD=contraseña
 #### Producción
 ```bash
 ./mvnw clean package
-java -jar target/prueba-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+java -jar target/floreria-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
 ```
 
 ## 🗄️ Base de Datos
@@ -155,10 +158,10 @@ java -jar target/prueba-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
 - **Controller Integration Tests**: APIs REST completas (8 tests)
 
 ### Estadísticas de Cobertura
-- **Total de Pruebas**: 90+
-- **Cobertura**: Unitarias + Integración completa
-- **Autenticación Mock**: Configurada para todas las pruebas
-- **Base de Datos**: H2 en memoria para pruebas
+- **Total de Pruebas**: 7+ clases de prueba
+- **Cobertura**: Unitarias + Integración básica
+- **Autenticación Mock**: Configurada para pruebas
+- **Base de Datos**: MySQL para pruebas
 
 ### Pruebas Específicas por Módulo
 ```bash
@@ -183,9 +186,10 @@ Una vez iniciada la aplicación, accede a:
 
 #### 🔐 Autenticación
 ```
-POST /api/auth/login      - Iniciar sesión
-POST /api/auth/register   - Registrar usuario
-POST /api/auth/refresh    - Renovar token
+POST /api/auth/login        - Iniciar sesión
+POST /api/auth/register     - Registrar usuario
+POST /api/auth/register/clerk - Registrar usuario con Clerk
+POST /api/auth/clerk-login  - Iniciar sesión con Clerk
 ```
 
 #### 🌸 Productos
