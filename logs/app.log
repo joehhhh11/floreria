@@ -1792,3 +1792,97 @@ org.hibernate.NonUniqueResultException: Query did not return a unique result: 2 
 2025-07-24 01:14:55.300 [SpringApplicationShutdownHook] INFO  [] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-07-24 01:14:55.304 [SpringApplicationShutdownHook] INFO  [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2025-07-24 01:14:55.335 [SpringApplicationShutdownHook] INFO  [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-07-24 10:15:14.090 [background-preinit] INFO  [] o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2025-07-24 10:15:14.179 [restartedMain] INFO  [] com.lulu.SigisAppApplication - Starting SigisAppApplication using Java 21.0.5 with PID 33076 (C:\Users\Joel\Desktop\floreriaxd\floreria\target\classes started by Joel in C:\Users\Joel\Desktop\floreriaxd\floreria)
+2025-07-24 10:15:14.180 [restartedMain] INFO  [] com.lulu.SigisAppApplication - No active profile set, falling back to 1 default profile: "default"
+2025-07-24 10:15:14.250 [restartedMain] INFO  [] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-07-24 10:15:14.250 [restartedMain] INFO  [] o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-07-24 10:15:18.073 [restartedMain] INFO  [] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-24 10:15:18.450 [restartedMain] INFO  [] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 306 ms. Found 11 JPA repository interfaces.
+2025-07-24 10:15:21.084 [restartedMain] INFO  [] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-07-24 10:15:21.116 [restartedMain] INFO  [] o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-07-24 10:15:21.121 [restartedMain] INFO  [] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-07-24 10:15:21.122 [restartedMain] INFO  [] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.40]
+2025-07-24 10:15:21.661 [restartedMain] INFO  [] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-07-24 10:15:21.668 [restartedMain] INFO  [] o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 7416 ms
+2025-07-24 10:15:22.665 [restartedMain] INFO  [] o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-24 10:15:22.738 [restartedMain] INFO  [] org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.13.Final
+2025-07-24 10:15:22.780 [restartedMain] INFO  [] o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-07-24 10:15:23.599 [restartedMain] INFO  [] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-24 10:15:23.671 [restartedMain] INFO  [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-07-24 10:15:24.326 [restartedMain] INFO  [] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5173d243
+2025-07-24 10:15:24.328 [restartedMain] INFO  [] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-07-24 10:15:24.397 [restartedMain] WARN  [] org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-24 10:15:24.419 [restartedMain] INFO  [] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.40
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-24 10:15:27.337 [restartedMain] INFO  [] o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-07-24 10:15:27.489 [restartedMain] INFO  [] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-24 10:15:28.167 [restartedMain] INFO  [] com.lulu.logging.FilterConfig - CommonsRequestLoggingFilter configurado correctamente
+2025-07-24 10:15:28.820 [restartedMain] WARN  [] o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-24 10:15:28.891 [restartedMain] INFO  [] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2025-07-24 10:15:31.008 [restartedMain] INFO  [] o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-07-24 10:15:31.031 [restartedMain] INFO  [] o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-07-24 10:15:31.051 [restartedMain] INFO  [] o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2025-07-24 10:15:31.065 [restartedMain] INFO  [] com.lulu.SigisAppApplication - Started SigisAppApplication in 17.894 seconds (process running for 18.681)
+2025-07-24 10:15:35.870 [http-nio-8080-exec-1] INFO  [] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-24 10:15:35.871 [http-nio-8080-exec-1] INFO  [] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-24 10:15:35.872 [http-nio-8080-exec-1] INFO  [] o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2025-07-24 10:15:35.921 [http-nio-8080-exec-1] INFO  [85c97e39] com.lulu.logging.AuditLoggingFilter - REQUEST [85c97e39] GET /api/products
+2025-07-24 10:15:36.070 [http-nio-8080-exec-1] INFO  [85c97e39] com.lulu.logging.AuditLoggingFilter - RESPONSE [85c97e39] GET /api/products responded 200 in 149 ms
+2025-07-24 10:15:36.072 [http-nio-8080-exec-2] INFO  [d5a4e354] com.lulu.logging.AuditLoggingFilter - REQUEST [d5a4e354] GET /api/products
+2025-07-24 10:15:36.114 [http-nio-8080-exec-2] INFO  [d5a4e354] com.lulu.logging.AuditLoggingFilter - RESPONSE [d5a4e354] GET /api/products responded 200 in 42 ms
+2025-07-24 10:15:36.706 [http-nio-8080-exec-3] INFO  [6e639700] com.lulu.logging.AuditLoggingFilter - REQUEST [6e639700] GET /api/products
+2025-07-24 10:15:36.769 [http-nio-8080-exec-3] INFO  [6e639700] com.lulu.logging.AuditLoggingFilter - RESPONSE [6e639700] GET /api/products responded 200 in 63 ms
+2025-07-24 10:15:43.411 [http-nio-8080-exec-9] INFO  [0c3b345f] com.lulu.logging.AuditLoggingFilter - REQUEST [0c3b345f] GET /api/products
+2025-07-24 10:15:43.455 [http-nio-8080-exec-9] INFO  [0c3b345f] com.lulu.logging.AuditLoggingFilter - RESPONSE [0c3b345f] GET /api/products responded 200 in 44 ms
+2025-07-24 10:15:45.127 [http-nio-8080-exec-6] INFO  [bb08891b] com.lulu.logging.AuditLoggingFilter - REQUEST [bb08891b] GET /api/products
+2025-07-24 10:15:45.132 [http-nio-8080-exec-5] INFO  [2583f312] com.lulu.logging.AuditLoggingFilter - REQUEST [2583f312] GET /api/category
+2025-07-24 10:15:45.144 [http-nio-8080-exec-5] INFO  [2583f312] com.lulu.logging.AuditLoggingFilter - RESPONSE [2583f312] GET /api/category responded 200 in 12 ms
+2025-07-24 10:15:45.156 [http-nio-8080-exec-4] INFO  [4cf52be1] com.lulu.logging.AuditLoggingFilter - REQUEST [4cf52be1] GET /api/category
+2025-07-24 10:15:45.162 [http-nio-8080-exec-4] INFO  [4cf52be1] com.lulu.logging.AuditLoggingFilter - RESPONSE [4cf52be1] GET /api/category responded 200 in 7 ms
+2025-07-24 10:15:45.178 [http-nio-8080-exec-6] INFO  [bb08891b] com.lulu.logging.AuditLoggingFilter - RESPONSE [bb08891b] GET /api/products responded 200 in 51 ms
+2025-07-24 10:15:45.191 [http-nio-8080-exec-6] INFO  [561215f9] com.lulu.logging.AuditLoggingFilter - REQUEST [561215f9] GET /api/products
+2025-07-24 10:15:45.257 [http-nio-8080-exec-6] INFO  [561215f9] com.lulu.logging.AuditLoggingFilter - RESPONSE [561215f9] GET /api/products responded 200 in 66 ms
+2025-07-24 10:15:45.996 [http-nio-8080-exec-1] INFO  [ee2beb03] com.lulu.logging.AuditLoggingFilter - REQUEST [ee2beb03] GET /api/products/1
+2025-07-24 10:15:45.996 [http-nio-8080-exec-2] INFO  [f0339108] com.lulu.logging.AuditLoggingFilter - REQUEST [f0339108] GET /api/products
+2025-07-24 10:15:45.996 [http-nio-8080-exec-1] INFO  [ee2beb03] AUDIT - AUDIT_REQUEST [ee2beb03] GET /api/products/1 | IP: 0:0:0:0:0:0:0:1 | UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 | Referer: http://localhost:5173/
+2025-07-24 10:15:46.020 [http-nio-8080-exec-1] INFO  [ee2beb03] com.lulu.logging.AuditLoggingFilter - RESPONSE [ee2beb03] GET /api/products/1 responded 200 in 24 ms
+2025-07-24 10:15:46.020 [http-nio-8080-exec-1] INFO  [ee2beb03] AUDIT - AUDIT_RESPONSE [ee2beb03] GET /api/products/1 | Status: 200 | Duration: 24 ms
+2025-07-24 10:15:46.027 [http-nio-8080-exec-3] INFO  [12d22d03] com.lulu.logging.AuditLoggingFilter - REQUEST [12d22d03] GET /api/products/1
+2025-07-24 10:15:46.027 [http-nio-8080-exec-3] INFO  [12d22d03] AUDIT - AUDIT_REQUEST [12d22d03] GET /api/products/1 | IP: 0:0:0:0:0:0:0:1 | UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 | Referer: http://localhost:5173/
+2025-07-24 10:15:46.031 [http-nio-8080-exec-2] INFO  [f0339108] com.lulu.logging.AuditLoggingFilter - RESPONSE [f0339108] GET /api/products responded 200 in 35 ms
+2025-07-24 10:15:46.033 [http-nio-8080-exec-8] INFO  [858df4b1] com.lulu.logging.AuditLoggingFilter - REQUEST [858df4b1] GET /api/products
+2025-07-24 10:15:46.038 [http-nio-8080-exec-3] INFO  [12d22d03] com.lulu.logging.AuditLoggingFilter - RESPONSE [12d22d03] GET /api/products/1 responded 200 in 11 ms
+2025-07-24 10:15:46.038 [http-nio-8080-exec-3] INFO  [12d22d03] AUDIT - AUDIT_RESPONSE [12d22d03] GET /api/products/1 | Status: 200 | Duration: 11 ms
+2025-07-24 10:15:46.063 [http-nio-8080-exec-8] INFO  [858df4b1] com.lulu.logging.AuditLoggingFilter - RESPONSE [858df4b1] GET /api/products responded 200 in 30 ms
+2025-07-24 10:15:56.430 [http-nio-8080-exec-7] INFO  [73ae6858] com.lulu.logging.AuditLoggingFilter - REQUEST [73ae6858] POST /api/auth/clerk-login
+2025-07-24 10:15:56.430 [http-nio-8080-exec-7] INFO  [73ae6858] AUDIT - AUTH_ATTEMPT [73ae6858] /api/auth/clerk-login | IP: 0:0:0:0:0:0:0:1
+2025-07-24 10:15:56.448 [http-nio-8080-exec-8] INFO  [3fd52df5] com.lulu.logging.AuditLoggingFilter - REQUEST [3fd52df5] POST /api/auth/clerk-login
+2025-07-24 10:15:56.449 [http-nio-8080-exec-8] INFO  [3fd52df5] AUDIT - AUTH_ATTEMPT [3fd52df5] /api/auth/clerk-login | IP: 0:0:0:0:0:0:0:1
+2025-07-24 10:15:56.586 [http-nio-8080-exec-8] INFO  [3fd52df5] com.lulu.logging.AuditLoggingFilter - RESPONSE [3fd52df5] POST /api/auth/clerk-login responded 200 in 138 ms
+2025-07-24 10:15:56.586 [http-nio-8080-exec-8] INFO  [3fd52df5] AUDIT - AUTH_SUCCESS [3fd52df5] /api/auth/clerk-login | IP: 0:0:0:0:0:0:0:1 | Duration: 138 ms
+2025-07-24 10:15:56.586 [http-nio-8080-exec-7] INFO  [73ae6858] com.lulu.logging.AuditLoggingFilter - RESPONSE [73ae6858] POST /api/auth/clerk-login responded 200 in 156 ms
+2025-07-24 10:15:56.586 [http-nio-8080-exec-7] INFO  [73ae6858] AUDIT - AUTH_SUCCESS [73ae6858] /api/auth/clerk-login | IP: 0:0:0:0:0:0:0:1 | Duration: 156 ms
+2025-07-24 10:15:57.912 [http-nio-8080-exec-5] INFO  [751b646a] com.lulu.logging.AuditLoggingFilter - REQUEST [751b646a] POST /api/auth/clerk-login
+2025-07-24 10:15:57.912 [http-nio-8080-exec-5] INFO  [751b646a] AUDIT - AUTH_ATTEMPT [751b646a] /api/auth/clerk-login | IP: 0:0:0:0:0:0:0:1
+2025-07-24 10:15:57.932 [http-nio-8080-exec-5] INFO  [751b646a] com.lulu.logging.AuditLoggingFilter - RESPONSE [751b646a] POST /api/auth/clerk-login responded 200 in 20 ms
+2025-07-24 10:15:57.932 [http-nio-8080-exec-5] INFO  [751b646a] AUDIT - AUTH_SUCCESS [751b646a] /api/auth/clerk-login | IP: 0:0:0:0:0:0:0:1 | Duration: 20 ms
+2025-07-24 10:16:07.403 [http-nio-8080-exec-3] INFO  [d1ff616d] com.lulu.logging.AuditLoggingFilter - REQUEST [d1ff616d] POST /api/orders
+2025-07-24 10:16:07.403 [http-nio-8080-exec-3] INFO  [d1ff616d] AUDIT - AUDIT_REQUEST [d1ff616d] POST /api/orders | IP: 0:0:0:0:0:0:0:1 | UserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 | Referer: http://localhost:5173/
+2025-07-24 10:16:07.406 [http-nio-8080-exec-3] INFO  [d1ff616d] c.l.orders.service.OrderServiceImpl - Iniciando creación de orden para usuario autenticado
+2025-07-24 10:16:07.413 [http-nio-8080-exec-3] INFO  [d1ff616d] c.l.orders.service.OrderServiceImpl - Usuario autenticado: juanperez creando orden
+2025-07-24 10:16:07.414 [http-nio-8080-exec-3] INFO  [d1ff616d] com.lulu.orders.mapper.OrderMapper - Creando nueva orden para usuario: juanperez con 1 productos
+2025-07-24 10:16:07.532 [http-nio-8080-exec-3] INFO  [d1ff616d] com.lulu.logging.AuditLoggingFilter - RESPONSE [d1ff616d] POST /api/orders responded 200 in 129 ms
+2025-07-24 10:16:07.533 [http-nio-8080-exec-3] INFO  [d1ff616d] AUDIT - AUDIT_RESPONSE [d1ff616d] POST /api/orders | Status: 200 | Duration: 129 ms
+2025-07-24 10:16:07.554 [http-nio-8080-exec-8] INFO  [d49dac7d] com.lulu.logging.AuditLoggingFilter - REQUEST [d49dac7d] POST /api/pay-order/29
+2025-07-24 10:16:09.444 [http-nio-8080-exec-8] WARN  [d49dac7d] com.lulu.logging.AuditLoggingFilter - SLOW_REQUEST [d49dac7d] POST /api/pay-order/29 responded 200 in 1890 ms (SLOW)
+2025-07-24 10:16:15.365 [http-nio-8080-exec-9] INFO  [f783f709] com.lulu.logging.AuditLoggingFilter - REQUEST [f783f709] POST /api/auth/clerk-login
+2025-07-24 10:16:15.365 [http-nio-8080-exec-9] INFO  [f783f709] AUDIT - AUTH_ATTEMPT [f783f709] /api/auth/clerk-login | IP: 0:0:0:0:0:0:0:1
+2025-07-24 10:16:15.547 [http-nio-8080-exec-9] INFO  [f783f709] com.lulu.logging.AuditLoggingFilter - RESPONSE [f783f709] POST /api/auth/clerk-login responded 200 in 182 ms
+2025-07-24 10:16:15.547 [http-nio-8080-exec-9] INFO  [f783f709] AUDIT - AUTH_SUCCESS [f783f709] /api/auth/clerk-login | IP: 0:0:0:0:0:0:0:1 | Duration: 182 ms
