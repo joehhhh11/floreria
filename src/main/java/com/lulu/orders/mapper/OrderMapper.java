@@ -72,7 +72,7 @@ public class OrderMapper {
 
             double descuento = 0.0;
             if (cupon != null && cupon.getDescuentoPorcentaje() != null) {
-                descuento = subtotal * (cupon.getDescuentoPorcentaje() / 100.0);
+                descuento = cupon.getDescuentoPorcentaje(); // Monto fijo
             }
             order.setTotal(subtotal - descuento);
         }
@@ -90,11 +90,9 @@ public class OrderMapper {
                 .mapToDouble(d -> d.getCantidad() * d.getPrecioUnitario())
                 .sum();
 
-        double descuentoPorcentaje = (order.getCuponModel() != null)
+        double descuento = (order.getCuponModel() != null)
                 ? order.getCuponModel().getDescuentoPorcentaje()
                 : 0.0;
-
-        double descuento = subtotal * (descuentoPorcentaje / 100.0);
 
         OrderResponse response = new OrderResponse();
         response.setPedidoId(order.getId());
