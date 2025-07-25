@@ -29,6 +29,83 @@ Una plataforma de e-commerce moderna especializada en la venta de flores para oc
 - **Arquitectura**: Microservicios con Spring Boot
 - **Seguridad**: JWT + Spring Security
 - **Base de Datos**: JPA + Hibernate con MySQL/H2
+## 📘 Casos de Uso
+
+### 📌 Registrar Cliente Nuevo
+- **Actores**: Cliente  
+- **Descripción**: El cliente podrá crear una cuenta proporcionando sus datos personales.  
+- **Precondición**: El cliente no debe tener una cuenta registrada.  
+- **Postcondición**: Se crea una cuenta de usuario y se notifica al cliente.
+
+**Flujos Básicos**:
+1. El cliente accede a la opción de “Registrarse”.
+2. El cliente ingresa sus datos.
+3. El sistema valida la información.
+4. Se envía un código de verificación al correo electrónico.
+5. El sistema guarda los datos y crea la cuenta.
+
+**Flujos Alternativos**:
+- Si el cliente ingresa un correo ya registrado, el sistema muestra un mensaje de error.
+
+### 🔐 Iniciar Sesión
+- **Actores**: Cliente  
+- **Descripción**: Permite al cliente ingresar a su cuenta para gestionar pedidos.  
+- **Precondición**: El cliente debe estar registrado.  
+- **Postcondición**: El cliente accede a su panel personal.
+
+**Flujos Básicos**:
+1. Accede al formulario de inicio de sesión.
+2. Ingresa correo y contraseña.
+3. El sistema valida las credenciales.
+4. Accede a su cuenta.
+
+**Flujos Alternativos**:
+- Si ingresa datos incorrectos, se muestra un mensaje de error.
+
+### 🛍️ Registrar Pedido
+- **Actores**: Cliente  
+- **Descripción**: El cliente selecciona productos y realiza el pago.  
+- **Precondición**: Debe estar registrado e iniciar sesión.  
+- **Postcondición**: Pedido registrado y se envía confirmación.
+
+**Flujos Básicos**:
+1. Selecciona productos y los añade al carrito.
+2. Revisa el carrito y procede a la compra.
+3. Proporciona datos de envío y método de pago.
+4. Se confirma el pedido y se envía un recibo.
+
+**Flujos Alternativos**:
+- Si no hay saldo, se solicita otro método de pago.
+- Si el producto no está disponible, se notifica.
+
+### 🛠️ Gestionar Productos
+- **Actores**: Administrador  
+- **Descripción**: Agregar, editar y eliminar productos desde el panel.  
+- **Precondición**: Debe iniciar sesión como administrador.  
+- **Postcondición**: Catálogo actualizado.
+
+**Flujos Básicos**:
+1. Accede al panel de administración.
+2. Elige agregar producto e ingresa datos.
+3. Guarda la información.
+
+**Flujos Alternativos**:
+- Error al subir datos, se muestra mensaje.
+
+### 📈 Generar Reporte de Ventas
+- **Actores**: Administrador de ventas  
+- **Descripción**: Generar reportes de ventas por fechas.  
+- **Precondición**: Estar autenticado y tener acceso a reportes.  
+- **Postcondición**: Reportes generados y disponibles.
+
+**Flujos Básicos**:
+1. Accede a sección de reportes.
+2. Selecciona fechas y filtros.
+3. Se genera y visualiza el reporte.
+
+**Flujos Alternativos**:
+- Si no hay datos, se notifica.
+- Se pueden aplicar más filtros
 
 ## 🛠️ Tecnologías Utilizadas
 
@@ -42,8 +119,9 @@ Una plataforma de e-commerce moderna especializada en la venta de flores para oc
   - Spring Validation (Validaciones)
 
 ### Base de Datos
-- **Producción**: PostgreSQL (Railway) / MySQL (Local)
-- **Desarrollo/Pruebas**: MySQL
+**Producción**: PostgreSQL (Railway) / MySQL (Local)
+**Desarrollo**: MySQL
+**Pruebas**: H2 en memoria
 
 ### Herramientas de Desarrollo
 - **Build Tool**: Maven
@@ -85,22 +163,29 @@ spring.datasource.password=Joehxd123!
 spring.jpa.hibernate.ddl-auto=update
 ```
 
+#### Para Pruebas (H2)
+```properties
+# application-test.properties
+spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=create-drop
+```
+#### TEST
 #### Para Producción (PostgreSQL - Railway)
 ```properties
 # application-prod.properties
+*Visualización de pruebas automatizadas ejecutadas sobre el sistema.*
 spring.datasource.url=jdbc:postgresql://postgres.railway.internal:5432/railway
 spring.datasource.username=postgres
 spring.datasource.password=${PGPASSWORD:defaultpassword}
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.hibernate.ddl-auto=update
-```
 
 ### 3. Variables de Entorno
-```bash
-# JWT Configuration
 JWT_SECRET=tu_clave_secreta_jwt_muy_larga_y_segura
-
 # Stripe Configuration
 STRIPE_SECRET_KEY=sk_test_tu_clave_secreta_stripe
 STRIPE_PUBLISHABLE_KEY=pk_test_tu_clave_publica_stripe
@@ -111,12 +196,11 @@ DB_USERNAME=usuario
 DB_PASSWORD=contraseña
 ```
 
-### 4. Ejecutar la Aplicación
+
+
 
 #### Desarrollo
 ```bash
-./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
-```
 
 #### Producción
 ```bash
@@ -124,68 +208,51 @@ DB_PASSWORD=contraseña
 java -jar target/floreria-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
 ```
 
-## 🗄️ Base de Datos
 
-### Estructura Principal
 - **usuarios**: Gestión de usuarios y autenticación
 - **productos**: Catálogo de flores y productos
 - **categoria**: Clasificación de productos
 - **orders**: Gestión de pedidos
-- **cupones**: Sistema de descuentos
-
 ### Script de Inicialización
 📂 [Ver script completo](docs/floreria_db.sql)
 
 ## 🧪 Sistema de Pruebas
 
+![Pruebas Automatizadas](docs/test.jpg)
+
 ### Ejecutar Todas las Pruebas
-```bash
 ./mvnw test
-```
 
 ### Tipos de Pruebas Implementadas
 
 #### ✅ Pruebas Unitarias (7 módulos)
-- **ProductServiceTest**: Lógica de negocio de productos
-- **ProductMapperTest**: Transformación de DTOs
 - **ProductControllerTest**: Controladores REST
 - **AuthServiceTest**: Autenticación y autorización
 - **OrderServiceTest**: Gestión de pedidos
 
 #### ✅ Pruebas de Integración (3 categorías)
 - **Repository Tests**: Persistencia de datos (10 tests)
-- **Service Integration Tests**: Integración de servicios (11 tests)
-- **Controller Integration Tests**: APIs REST completas (8 tests)
 
-### Estadísticas de Cobertura
 - **Total de Pruebas**: 7+ clases de prueba
 - **Cobertura**: Unitarias + Integración básica
 - **Autenticación Mock**: Configurada para pruebas
 - **Base de Datos**: MySQL para pruebas
-
-### Pruebas Específicas por Módulo
 ```bash
 # Pruebas de productos
 ./mvnw test -Dtest="*Product*Test*"
 
 # Pruebas de autenticación
 ./mvnw test -Dtest="*Auth*Test*"
-
 # Pruebas de pedidos
-./mvnw test -Dtest="*Order*Test*"
 ```
 
 ## 📡 API Documentation
 
-### Swagger UI
-Una vez iniciada la aplicación, accede a:
 - **Local**: http://localhost:8080/swagger-ui.html
 - **Documentación JSON**: http://localhost:8080/v3/api-docs
 
 ### Endpoints Principales
 
-#### 🔐 Autenticación
-```
 POST /api/auth/login        - Iniciar sesión
 POST /api/auth/register     - Registrar usuario
 POST /api/auth/register/clerk - Registrar usuario con Clerk
