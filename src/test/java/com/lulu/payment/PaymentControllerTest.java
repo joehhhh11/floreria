@@ -129,7 +129,7 @@ class PaymentControllerTest {
     @Test
     void createCheckoutSession_ShouldThrowException_WhenOrderNotFound() {
         // Arrange
-        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+        when(orderRepository.findByIdWithProductos(1L)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(
@@ -137,13 +137,13 @@ class PaymentControllerTest {
             () -> paymentController.createCheckoutSession(1L)
         );
 
-        verify(orderRepository).findById(1L);
+        verify(orderRepository).findByIdWithProductos(1L);
     }
 
     @Test
     void createCheckoutSession_ShouldFindOrder_WhenOrderExists() {
         // Arrange
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(sampleOrder));
+        when(orderRepository.findByIdWithProductos(1L)).thenReturn(Optional.of(sampleOrder));
 
         // Act & Assert
         try {
@@ -152,7 +152,7 @@ class PaymentControllerTest {
             // Es esperado que falle debido a Stripe, pero debe haber encontrado la orden
         }
 
-        verify(orderRepository).findById(1L);
+        verify(orderRepository).findByIdWithProductos(1L);
     }
 
     @Test
